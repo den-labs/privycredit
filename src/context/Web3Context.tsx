@@ -79,7 +79,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
       if (accounts.length > 0) {
         setAccount(accounts[0] as Address);
 
-        const targetChainId = 534352;
+        const targetChainId = 534351;
         const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
 
         if (parseInt(currentChainId, 16) !== targetChainId) {
@@ -96,14 +96,14 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
                   params: [
                     {
                       chainId: `0x${targetChainId.toString(16)}`,
-                      chainName: 'Scroll',
+                      chainName: 'Scroll Sepolia Testnet',
                       nativeCurrency: {
                         name: 'ETH',
                         symbol: 'ETH',
                         decimals: 18,
                       },
-                      rpcUrls: ['https://rpc.scroll.io'],
-                      blockExplorerUrls: ['https://scrollscan.com'],
+                      rpcUrls: ['https://sepolia-rpc.scroll.io'],
+                      blockExplorerUrls: ['https://sepolia.scrollscan.com'],
                     },
                   ],
                 });

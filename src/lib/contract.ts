@@ -1,5 +1,5 @@
 import { createPublicClient, createWalletClient, custom, http, type Address } from 'viem';
-import { scroll } from 'viem/chains';
+import { scrollSepolia } from 'viem/chains';
 
 export const CONTRACT_ADDRESS = '0x017Ee1cf9fd610b0D2a264bca1dec9Efe0d8b778' as Address;
 
@@ -163,7 +163,7 @@ export const CONTRACT_ABI = [
 ] as const;
 
 export const publicClient = createPublicClient({
-  chain: scroll,
+  chain: scrollSepolia,
   transport: http(),
 });
 
@@ -173,7 +173,7 @@ export function createWalletClientFromProvider() {
   }
 
   return createWalletClient({
-    chain: scroll,
+    chain: scrollSepolia,
     transport: custom(window.ethereum),
   });
 }

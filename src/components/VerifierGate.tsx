@@ -312,7 +312,7 @@ function VerificationResult({
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">TX Hash:</span>
                   <a
-                    href={`https://scrollscan.com/tx/${proof.tx_hash}`}
+                    href={`https://sepolia.scrollscan.com/tx/${proof.tx_hash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-mono text-primary text-xs hover:underline flex items-center gap-1"
