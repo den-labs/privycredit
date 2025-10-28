@@ -10,6 +10,7 @@ import Simulator from './components/Simulator';
 import Reminders from './components/Reminders';
 import VerifierGate from './components/VerifierGate';
 import NetworkAlert from './components/NetworkAlert';
+import Footer from './components/Footer';
 
 function App() {
   const { currentScreen } = useApp();
@@ -44,9 +45,12 @@ function App() {
   };
 
   return (
-    <div className="antialiased">
+    <div className="antialiased flex flex-col min-h-screen">
       <NetworkAlert />
-      {renderScreen()}
+      <div className="flex-1">
+        {renderScreen()}
+      </div>
+      <Footer />
     </div>
   );
 }
