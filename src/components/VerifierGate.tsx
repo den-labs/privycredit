@@ -1,24 +1,22 @@
 import { useState } from 'react';
 import { Shield, QrCode, Search, AlertCircle, ExternalLink } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { publicClient, CONTRACT_ADDRESS, CONTRACT_ABI, bandToBandLevel } from '../lib/contract';
-import { Proof, Share } from '../types';
+import { Proof } from '../types';
 
 interface VerificationResult {
-  proof: Proof;
-  share: Share;
-  onChainValid?: boolean;
+  proof: any;
+  onChainValid: boolean;
 }
 
 export default function VerifierGate() {
-  const [proofToken, setProofToken] = useState('');
+  const [proofId, setProofId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<VerificationResult | null>(null);
 
   const handleVerify = async () => {
-    if (!proofToken.trim()) {
-      setError('Por favor ingresa un ID o enlace de prueba');
+    if (!proofId.trim()) {
+      setError('Por favor ingresa un ID de prueba');
       return;
     }
 
@@ -26,72 +24,46 @@ export default function VerifierGate() {
     setError('');
 
     try {
-      const token = proofToken.includes('/verify/')
-        ? proofToken.split('/verify/')[1]
-        : proofToken.trim();
+      const contractProof = await publicClient.readContract({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: 'getProofSummary',
+        args: [proofId as `0x${string}`],
+      });
 
-      const { data: shareData, error: shareError } = await supabase
-        .from('shares')
-        .select('*')
-        .eq('token', token)
-        .maybeSingle();
+      const [user, epoch, commitment, stability, inflows, risk, valid, createdAt] = contractProof;
 
-      if (shareError) throw shareError;
-
-      if (!shareData) {
-        setError('Prueba no encontrada. Verifica el enlace o ID.');
+      if (!valid) {
+        setError('Esta prueba no es válida o ha sido revocada.');
         setLoading(false);
         return;
       }
 
-      const now = new Date();
-      const expiresAt = new Date(shareData.expires_at);
+      const proof = {
+        id: proofId,
+        user_id: user,
+        epoch: Number(epoch),
+        commitment,
+        factors: {
+          estabilidad: bandToBandLevel(Number(stability)),
+          inflows: bandToBandLevel(Number(inflows)),
+          riesgo: bandToBandLevel(Number(risk)),
+        },
+        valid,
+        created_at: new Date(Number(createdAt) * 1000).toISOString(),
+        tx_hash: proofId,
+      };
 
-      if (now > expiresAt) {
-        setError('Este enlace ha expirado. Solicita un nuevo enlace al cliente.');
-        setLoading(false);
-        return;
-      }
-
-      const { data: proofData, error: proofError } = await supabase
-        .from('proofs')
-        .select('*')
-        .eq('id', shareData.proof_id)
-        .maybeSingle();
-
-      if (proofError) throw proofError;
-
-      if (!proofData) {
-        setError('Prueba no encontrada.');
-        setLoading(false);
-        return;
-      }
-
-      let onChainValid = false;
-
-      if (proofData.blockchain_proof_id) {
-        try {
-          const contractProof = await publicClient.readContract({
-            address: CONTRACT_ADDRESS,
-            abi: CONTRACT_ABI,
-            functionName: 'getProofSummary',
-            args: [proofData.blockchain_proof_id as `0x${string}`],
-          });
-
-          onChainValid = contractProof[6];
-        } catch (err) {
-          console.error('Error reading on-chain proof:', err);
-        }
-      }
+      const allA = stability === 0 && inflows === 0 && risk === 0;
+      const status = allA ? 'apto' : 'casi';
 
       setResult({
-        proof: proofData as Proof,
-        share: shareData as Share,
-        onChainValid,
+        proof: { ...proof, status },
+        onChainValid: valid,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Error al verificar la prueba. Intenta de nuevo.');
+      setError('Error al verificar la prueba. Verifica que el ID sea correcto.');
     } finally {
       setLoading(false);
     }
@@ -119,50 +91,50 @@ export default function VerifierGate() {
 
           <div className="bg-dark-card/50 border border-primary/20 rounded-2xl p-4 mb-6">
             <p className="text-sm text-gray-300">
-              Ingresa el enlace o ID de prueba compartido por el cliente para verificar su
+              Ingresa el ID de prueba (bytes32) compartido por el cliente para verificar su
               solvencia sin acceder a información personal.
             </p>
           </div>
 
           <div className="mb-6">
             <label className="block text-sm font-semibold text-white mb-3">
-              Enlace o ID de prueba
+              ID de prueba (0x...)
             </label>
             <input
               type="text"
-              value={proofToken}
+              value={proofId}
               onChange={(e) => {
-                setProofToken(e.target.value);
+                setProofId(e.target.value);
                 setError('');
               }}
-              placeholder="proof_abc123... o https://..."
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:outline-none transition-colors"
+              placeholder="0x..."
+              className="w-full px-4 py-3 border-2 border-gray-700 bg-gray-800 text-white rounded-2xl focus:border-blue-500 focus:outline-none transition-colors font-mono"
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 mb-6 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-400">{error}</p>
             </div>
           )}
 
           <div className="flex gap-3 mb-6">
             <button
               onClick={handleVerify}
-              disabled={loading || !proofToken.trim()}
-              className="flex-1 bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              disabled={loading || !proofId.trim()}
+              className="flex-1 bg-primary hover:bg-primary-dark disabled:bg-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
             >
               <Search className="w-5 h-5" />
               {loading ? 'Verificando...' : 'Verificar ahora'}
             </button>
 
-            <button className="bg-gray-100 hover:bg-gray-200 text-white px-6 py-4 rounded-2xl font-semibold transition-colors">
+            <button className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-4 rounded-2xl font-semibold transition-colors">
               <QrCode className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-700 pt-6">
             <h3 className="font-semibold text-white mb-3 text-sm">Qué verás al verificar:</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li className="flex items-start gap-2">
@@ -175,7 +147,7 @@ export default function VerifierGate() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-primary mt-0.5">•</span>
-                <span>Timestamp y metadatos de verificación</span>
+                <span>Verificación en blockchain Scroll</span>
               </li>
             </ul>
           </div>
@@ -192,7 +164,7 @@ function VerificationResult({
   result: VerificationResult;
   onReset: () => void;
 }) {
-  const { proof, share } = result;
+  const { proof } = result;
 
   const getBandColor = (band: string) => {
     switch (band) {
@@ -238,7 +210,7 @@ function VerificationResult({
             </p>
           </div>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-[2rem] p-6 mb-8">
+          <div className="bg-gray-800 border border-gray-700 rounded-[2rem] p-6 mb-8">
             <h3 className="font-semibold text-white mb-4">Bandas por factor</h3>
             <div className="grid gap-4">
               {factors.map((factor) => (
@@ -255,24 +227,16 @@ function VerificationResult({
             </div>
           </div>
 
-          {result.onChainValid !== undefined && (
-            <div className={`border-2 rounded-2xl p-4 mb-8 ${
-              result.onChainValid
-                ? 'bg-emerald-50 border-primary/300'
-                : 'bg-amber-50 border-amber-300'
-            }`}>
+          {result.onChainValid && (
+            <div className="border-2 rounded-2xl p-4 mb-8 bg-emerald-900/20 border-primary/30">
               <div className="flex items-center gap-3">
-                <Shield className={`w-6 h-6 ${
-                  result.onChainValid ? 'text-primary' : 'text-amber-600'
-                }`} />
+                <Shield className="w-6 h-6 text-primary" />
                 <div>
                   <h3 className="font-semibold text-white">
-                    {result.onChainValid ? 'Verificado en Blockchain' : 'Verificación Blockchain Pendiente'}
+                    Verificado en Blockchain
                   </h3>
                   <p className="text-sm text-gray-400">
-                    {result.onChainValid
-                      ? 'Prueba anclada y válida en Scroll'
-                      : 'Esperando confirmación on-chain'}
+                    Prueba anclada y válida en Scroll Sepolia
                   </p>
                 </div>
               </div>
@@ -284,7 +248,7 @@ function VerificationResult({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">ID de Prueba:</span>
-                <span className="font-mono text-white">
+                <span className="font-mono text-white text-xs">
                   {proof.id.substring(0, 12)}...
                 </span>
               </div>
@@ -294,32 +258,12 @@ function VerificationResult({
                   {new Date(proof.created_at).toLocaleString('es-ES')}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Válida hasta:</span>
-                <span className="text-white">
-                  {new Date(proof.expires_at).toLocaleString('es-ES')}
-                </span>
-              </div>
-              {proof.anchor_root && (
+              {proof.commitment && (
                 <div className="flex justify-between">
                   <span className="text-gray-400">Commitment:</span>
                   <span className="font-mono text-white text-xs">
-                    {proof.anchor_root.substring(0, 16)}...
+                    {proof.commitment.substring(0, 16)}...
                   </span>
-                </div>
-              )}
-              {proof.tx_hash && (
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">TX Hash:</span>
-                  <a
-                    href={`https://sepolia.scrollscan.com/tx/${proof.tx_hash}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono text-primary text-xs hover:underline flex items-center gap-1"
-                  >
-                    {proof.tx_hash.substring(0, 12)}...
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
                 </div>
               )}
               {proof.epoch !== undefined && (
@@ -328,6 +272,18 @@ function VerificationResult({
                   <span className="text-white">{proof.epoch}</span>
                 </div>
               )}
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400">Explorador:</span>
+                <a
+                  href={`https://sepolia.scrollscan.com/address/${CONTRACT_ADDRESS}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary text-xs hover:underline flex items-center gap-1"
+                >
+                  Ver contrato
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -337,7 +293,7 @@ function VerificationResult({
             </button>
             <button
               onClick={onReset}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-white py-4 rounded-2xl font-semibold transition-colors"
+              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-4 rounded-2xl font-semibold transition-colors"
             >
               Verificar otra
             </button>

@@ -1,44 +1,17 @@
 import { useState } from 'react';
 import { ChevronLeft, Bell, Check, Calendar } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { supabase } from '../lib/supabase';
 
 export default function Reminders() {
-  const { user, setCurrentScreen } = useApp();
+  const { setCurrentScreen } = useApp();
   const [selectedDays, setSelectedDays] = useState(30);
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSetReminder = async () => {
-    if (!user) return;
-
-    setLoading(true);
-    setError('');
-
-    try {
-      const reminderDate = new Date();
-      reminderDate.setDate(reminderDate.getDate() + selectedDays);
-
-      const { error: insertError } = await supabase.from('reminders').insert({
-        user_id: user.id,
-        reminder_date: reminderDate.toISOString(),
-        status: 'pending',
-      });
-
-      if (insertError) throw insertError;
-
-      setSuccess(true);
-
-      setTimeout(() => {
-        setCurrentScreen('result-casi');
-      }, 2000);
-    } catch (err) {
-      console.error(err);
-      setError('No se pudo crear el recordatorio. Intenta de nuevo.');
-    } finally {
-      setLoading(false);
-    }
+    setSuccess(true);
+    setTimeout(() => {
+      setCurrentScreen('result-casi');
+    }, 2000);
   };
 
   if (success) {
@@ -97,7 +70,7 @@ export default function Reminders() {
                   className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
                     selectedDays === days
                       ? 'border-blue-500 bg-dark-card/50'
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -114,7 +87,7 @@ export default function Reminders() {
             </div>
           </div>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 mb-8">
+          <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-8">
             <div className="flex items-start gap-3">
               <Calendar className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
               <div>
@@ -131,18 +104,11 @@ export default function Reminders() {
             </div>
           </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-red-800">{error}</p>
-            </div>
-          )}
-
           <button
             onClick={handleSetReminder}
-            disabled={loading}
-            className="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 text-white py-4 rounded-2xl font-semibold transition-all shadow-lg hover:shadow-xl"
+            className="w-full bg-primary hover:bg-primary-dark text-white py-4 rounded-2xl font-semibold transition-all shadow-lg hover:shadow-xl"
           >
-            {loading ? 'Configurando...' : 'Confirmar recordatorio'}
+            Confirmar recordatorio
           </button>
 
           <p className="text-xs text-gray-500 text-center mt-4">

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Shield, Loader } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useWeb3 } from '../context/Web3Context';
-import { supabase } from '../lib/supabase';
 import {
   CONTRACT_ADDRESS,
   CONTRACT_ABI,
@@ -10,7 +9,7 @@ import {
   bandLevelToBand,
 } from '../lib/contract';
 import { Proof, BandLevel } from '../types';
-import { keccak256, toHex, stringToHex } from 'viem';
+import { keccak256, stringToHex } from 'viem';
 
 const steps = [
   { id: 1, label: 'Recopilando señales', description: 'Analizando tu historial on-chain' },
@@ -44,14 +43,14 @@ const generateMockProof = (): { status: 'apto' | 'casi'; factors: any } => {
 };
 
 export default function GenerateProof() {
-  const { user, setCurrentScreen, setCurrentProof } = useApp();
+  const { setCurrentScreen, setCurrentProof } = useApp();
   const { account } = useWeb3();
   const [currentStep, setCurrentStep] = useState(1);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!user || !account) return;
+    if (!account) return;
 
     const stepDuration = 8000;
     const updateInterval = 50;
@@ -77,11 +76,11 @@ export default function GenerateProof() {
     }, updateInterval);
 
     return () => clearInterval(timer);
-  }, [user, account, currentStep]);
+  }, [account, currentStep]);
 
   const generateProof = async () => {
     try {
-      if (!user || !account) throw new Error('Usuario o wallet no autenticados');
+      if (!account) throw new Error('Wallet no autenticada');
 
       const mockProof = generateMockProof();
       const currentEpoch = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
@@ -113,29 +112,23 @@ export default function GenerateProof() {
         account: address,
       });
 
-      const { data, error: insertError } = await supabase
-        .from('proofs')
-        .insert({
-          user_id: user.id,
-          status: mockProof.status,
-          factors: mockProof.factors,
-          anchor_root: commitment,
-          blockchain_proof_id: proofId,
-          tx_hash: hash,
-          epoch: currentEpoch,
-          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        })
-        .select()
-        .maybeSingle();
+      const proof: Proof = {
+        id: proofId,
+        user_id: account,
+        status: mockProof.status,
+        factors: mockProof.factors,
+        anchor_root: commitment,
+        blockchain_proof_id: proofId,
+        tx_hash: hash,
+        epoch: currentEpoch,
+        created_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      };
 
-      if (insertError) throw insertError;
-
-      if (data) {
-        setCurrentProof(data as Proof);
-        setTimeout(() => {
-          setCurrentScreen(mockProof.status === 'apto' ? 'result-apto' : 'result-casi');
-        }, 500);
-      }
+      setCurrentProof(proof);
+      setTimeout(() => {
+        setCurrentScreen(mockProof.status === 'apto' ? 'result-apto' : 'result-casi');
+      }, 500);
     } catch (err: any) {
       console.error(err);
       setError(

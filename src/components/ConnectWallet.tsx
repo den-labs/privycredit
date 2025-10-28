@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { Wallet, ChevronLeft, Info, Check } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useWeb3 } from '../context/Web3Context';
-import { supabase } from '../lib/supabase';
 
 export default function ConnectWallet() {
-  const { setCurrentScreen, setWalletConnected, setWalletAddress } = useApp();
+  const { setCurrentScreen } = useApp();
   const { connect, account, isConnecting, error: web3Error } = useWeb3();
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState('');
@@ -21,30 +20,7 @@ export default function ConnectWallet() {
     try {
       await connect();
 
-      if (!account && !isConnecting) {
-        throw new Error('No se pudo conectar la wallet');
-      }
-
-      const walletAddress = account!;
-
-      const { data: authData, error: authError } = await supabase.auth.signInAnonymously();
-
-      if (authError) throw authError;
-
-      if (authData.user) {
-        const { error: insertError } = await supabase
-          .from('users')
-          .upsert({
-            id: authData.user.id,
-            wallet_address: walletAddress,
-            updated_at: new Date().toISOString(),
-          });
-
-        if (insertError) throw insertError;
-
-        setWalletConnected(true);
-        setWalletAddress(walletAddress);
-
+      if (account) {
         setTimeout(() => {
           setCurrentScreen('generate');
         }, 500);
@@ -138,9 +114,9 @@ export default function ConnectWallet() {
             </span>
           </label>
 
-          {error && (
+          {(error || web3Error) && (
             <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 mb-6">
-              <p className="text-sm text-red-400">{error}</p>
+              <p className="text-sm text-red-400">{error || web3Error}</p>
             </div>
           )}
 
