@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { type Address } from 'viem';
+import { SCROLL_SEPOLIA_CHAIN_ID, SCROLL_SEPOLIA_NAME, SCROLL_SEPOLIA_RPC, SCROLL_SEPOLIA_EXPLORER } from '../lib/contract';
 
 declare global {
   interface Window {
@@ -79,7 +80,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
       if (accounts.length > 0) {
         setAccount(accounts[0] as Address);
 
-        const targetChainId = 534351;
+        const targetChainId = SCROLL_SEPOLIA_CHAIN_ID;
         const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
 
         if (parseInt(currentChainId, 16) !== targetChainId) {
@@ -96,14 +97,14 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
                   params: [
                     {
                       chainId: `0x${targetChainId.toString(16)}`,
-                      chainName: 'Scroll Sepolia Testnet',
+                      chainName: SCROLL_SEPOLIA_NAME,
                       nativeCurrency: {
                         name: 'ETH',
                         symbol: 'ETH',
                         decimals: 18,
                       },
-                      rpcUrls: ['https://sepolia-rpc.scroll.io'],
-                      blockExplorerUrls: ['https://sepolia.scrollscan.com'],
+                      rpcUrls: [SCROLL_SEPOLIA_RPC],
+                      blockExplorerUrls: [SCROLL_SEPOLIA_EXPLORER],
                     },
                   ],
                 });

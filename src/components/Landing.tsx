@@ -1,10 +1,30 @@
-import { Shield, Lock, CheckCircle } from 'lucide-react';
+import { Shield, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { SCROLL_SEPOLIA_NAME, SCROLL_SEPOLIA_EXPLORER } from '../lib/contract';
 
 export default function Landing() {
   const { setCurrentScreen } = useApp();
 
   return (
+    <>
+      <div className="bg-blue-900/30 border-b border-blue-500/50 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-center gap-3 text-blue-300">
+            <AlertCircle className="w-5 h-5" />
+            <p className="text-sm">
+              Esta demo funciona en <strong>{SCROLL_SEPOLIA_NAME}</strong>.
+              <a
+                href={SCROLL_SEPOLIA_EXPLORER}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white ml-1"
+              >
+                Ver explorador
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
     <div className="min-h-screen bg-dark">
       <div className="max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -91,5 +111,6 @@ export default function Landing() {
         </div>
       </div>
     </div>
+    </>
   );
 }

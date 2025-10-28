@@ -1,6 +1,7 @@
 import { CheckCircle, Share2, Info, ChevronRight, ExternalLink } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { BandLevel } from '../types';
+import { SCROLL_SEPOLIA_EXPLORER } from '../lib/contract';
 
 const getBandColor = (band: BandLevel) => {
   switch (band) {
@@ -115,12 +116,12 @@ export default function ResultApto() {
             {currentProof.tx_hash && (
               <p className="text-xs text-center mt-2">
                 <a
-                  href={`https://scrollscan.com/tx/${currentProof.tx_hash}`}
+                  href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${currentProof.tx_hash}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline inline-flex items-center gap-1"
                 >
-                  Ver en Scrollscan
+                  Ver en Scroll Sepolia Scan
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </p>

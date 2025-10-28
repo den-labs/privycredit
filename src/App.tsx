@@ -9,17 +9,10 @@ import ImprovementChecklist from './components/ImprovementChecklist';
 import Simulator from './components/Simulator';
 import Reminders from './components/Reminders';
 import VerifierGate from './components/VerifierGate';
+import NetworkAlert from './components/NetworkAlert';
 
 function App() {
-  const { currentScreen, loading } = useApp();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center">
-        <div className="text-slate-600">Cargando...</div>
-      </div>
-    );
-  }
+  const { currentScreen } = useApp();
 
   const renderScreen = () => {
     if (window.location.pathname.startsWith('/verify')) {
@@ -50,7 +43,12 @@ function App() {
     }
   };
 
-  return <div className="antialiased">{renderScreen()}</div>;
+  return (
+    <div className="antialiased">
+      <NetworkAlert />
+      {renderScreen()}
+    </div>
+  );
 }
 
 export default App;

@@ -14,7 +14,7 @@ import { keccak256, stringToHex } from 'viem';
 const steps = [
   { id: 1, label: 'Recopilando señales', description: 'Analizando tu historial on-chain' },
   { id: 2, label: 'Sellando la prueba ZK', description: 'Generando verificación criptográfica' },
-  { id: 3, label: 'Anclando en blockchain', description: 'Registrando en Scroll' },
+  { id: 3, label: 'Anclando en blockchain', description: 'Registrando en Scroll Sepolia' },
   { id: 4, label: 'Listo', description: 'Tu prueba está lista' },
 ];
 

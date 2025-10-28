@@ -1,6 +1,11 @@
 import { createPublicClient, createWalletClient, custom, http, type Address } from 'viem';
 import { scrollSepolia } from 'viem/chains';
 
+export const SCROLL_SEPOLIA_CHAIN_ID = 534351;
+export const SCROLL_SEPOLIA_NAME = 'Scroll Sepolia Testnet';
+export const SCROLL_SEPOLIA_RPC = 'https://sepolia-rpc.scroll.io';
+export const SCROLL_SEPOLIA_EXPLORER = 'https://sepolia.scrollscan.com';
+
 export const CONTRACT_ADDRESS = '0x017Ee1cf9fd610b0D2a264bca1dec9Efe0d8b778' as Address;
 
 export const CONTRACT_ABI = [
