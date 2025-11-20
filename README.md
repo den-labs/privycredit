@@ -1,64 +1,38 @@
 # PrivyCredit
 
-PrivyCredit is a zero-knowledge credit proof experience that lets people demonstrate lending readiness without exposing raw financial data. The app guides users through wallet connection, proof generation, improvement tips, and lender-facing verification, anchoring attestations on Scroll while persisting metadata in Supabase.
+PrivyCredit es la puerta de entrada para ofrecer crédito confiable sobre señales on-chain. Permitimos que los usuarios prueben su solvencia sin entregar datos sensibles y brindamos a los partners un flujo claro, medible y con identidad propia.
 
-## Core Features
-- **Privacy-preserving proofs**: Wallet analysis outputs banded credit signals (A/B/C) that can be shared without leaking PII.
-- **Verifier Gate**: Lenders validate proofs via on-chain contract reads plus Supabase share tokens.
-- **Improvement checklist**: Actionable recommendations keep users engaged even when they fall short.
-- **Scroll anchoring**: Proof IDs, commitments, and factor bands are stored in `submitProof` for immutability.
+## Propuesta Ejecutiva
+- **Confianza inmediata:** pruebas selladas que se anclan en Scroll, listas para que bancos y fintechs las verifiquen.
+- **Experiencia cuidada:** guía paso a paso (conectar, analizar, compartir) que reduce fricción y comunica valor en todo momento.
+- **Activación comercial:** módulos de checklist, simulador y recordatorios mantienen al prospecto en tu embudo incluso si aún no califica.
+- **Infra lista para alianzas:** Supabase + AppKit + wagmi facilitan integrar wallets, datos y contratos en un mismo stack.
 
-## Architecture Overview
-| Layer | Tech |
+## Flujo Comercial
+1. Usuario conecta su wallet y otorga consentimiento para el análisis.
+2. El sistema analiza activity on-chain, genera bandas (A/B/C) y sella la prueba.
+3. El resultado se presenta con mensajes accionables; si califica puede compartir un enlace verificable con terceros.
+4. Lado verificador, se consulta la prueba contra el contrato y la metadata persistida en Supabase.
+
+## Componentes Clave
+| Capa | Valor para negocio |
 | --- | --- |
-| UI | React 18 + TypeScript + Vite, Tailwind CSS, Lucide icons |
-| State/Web3 | React Context, custom wallet + viem clients |
-| Data | Supabase Postgres (proofs, improvements, reminders) |
-| Chain | Scroll Sepolia smart contract (`0x99E36C7D…8A7`) |
+| **Experiencia (React + Tailwind)** | UI responsiva lista para campañas, soporta múltiples pantallas y mensajes marketing-ready. |
+| **Orquestación Web3 (AppKit + wagmi + viem)** | Conexión segura a wallets Scroll y ejecución de `submitProof` sin exponer lógica sensible. |
+| **Datos (Supabase)** | Persistencia de pruebas, mejoras y recordatorios para nutrir CRM y seguimiento. |
+| **Blockchain (Scroll Sepolia)** | Registro inmutable que respalda cada prueba con un hash verificable por socios. |
 
-Project layout highlights:
-- `src/main.tsx` bootstraps the SPA.
-- `src/App.tsx` controls routing between Connect, Generate, Result, Share, Verifier, Simulator, and Reminders screens.
-- `src/components/` houses composable UI blocks; `src/context/` includes `useApp`/wallet providers; `src/lib/` centralizes viem helpers; `src/types/` stores shared contracts.
-- `supabase/migrations/` tracks schema evolution; root docs (`PRD.md`, `BLOCKCHAIN_INTEGRATION.md`, `DESIGN_SYSTEM.md`, `AGENTS.md`) describe product, chain, UI, and contributor guidance.
+## Lanzamiento Rápido
+1. **Requisitos:** Node 20+, npm 10+, wallet compatible con Scroll.
+2. **Instalación:** `npm install` y copia `.env.example` a `.env.local` (todas las claves deben iniciar con `VITE_`).
+3. **Configura** RPC de Scroll, dirección del contrato y credenciales de Supabase.
+4. **Ejecución:** `npm run dev` para la demo interna; `npm run build` + `npm run preview` para QA previo a campañas.
 
-## Getting Started
-1. **Prereqs**: Node 20+, npm 10+, Git, and a Scroll-compatible wallet (MetaMask recommended).
-2. **Install**:
-   ```bash
-   npm install
-   cp .env.example .env.local   # create if it does not exist
-   ```
-3. **Configure** `.env.local` (all keys must start with `VITE_`):
-   ```
-   VITE_RPC_URL=https://sepolia-rpc.scroll.io
-   VITE_CONTRACT_ADDRESS=0x99E36C7D9a01d10E9bb7A40870b7580a2A88E8A7
-   VITE_SUPABASE_URL=...
-   VITE_SUPABASE_ANON_KEY=...
-   ```
-4. **Run locally**: `npm run dev` (http://localhost:5173).
+> Nota: Documentos de estrategia (PRD, blockchain, design system) viven en la carpeta `docs/` para alinear marketing, producto y tech.
 
-## Build, Test, and Quality Checks
-- `npm run dev` – Vite dev server with HMR.
-- `npm run build` – Production bundle (drops to `dist/`).
-- `npm run preview` – Serves the build locally.
-- `npm run lint` – ESLint (React, hooks, TypeScript rules).
-- `npm run typecheck` – `tsc --noEmit` via `tsconfig.app.json`.
+## Imagen de Referencia
+*(Reserva este espacio para un mockup o hero visual del flujo principal.)*
 
-Automated tests are not yet committed; prefer Vitest + React Testing Library for new flows. When adding specs, mirror `ComponentName.test.tsx` colocated with components or under `src/__tests__/`. Regardless of test coverage, run lint + typecheck before committing to ensure the CI baseline remains green.
-
-## Supabase & Blockchain Integration
-- Run migrations with the Supabase CLI or dashboard (`supabase db push`) before booting the frontend. Schema tables include `proofs`, `improvements`, and `reminders` with RLS enabled.
-- Keep `BLOCKCHAIN_INTEGRATION.md` updated whenever contract addresses or RPC endpoints change.
-- The frontend interacts with Scroll using viem’s `publicClient` and `walletClient`; ensure wallets connect to the Scroll Sepolia chain ID `534351/534352` depending on the environment noted in the blockchain doc.
-- Sensitive material (Supabase service keys, wallet mnemonics) must stay outside source control; rely on `.env.local` and secrets managers.
-
-## Troubleshooting
-- **Wallet fails to connect**: Confirm the wallet network matches Scroll and that `VITE_RPC_URL` points to a reachable RPC.
-- **Proof submission stuck**: Inspect browser devtools; the contract call should emit `submitProof`. Re-run with `npm run dev -- --host` if accessing from LAN devices.
-- **Supabase errors**: Verify RLS policies permit the logged-in wallet or service role; reapply migrations if tables are missing.
-
-## Contributing
-- Follow the short, imperative commit style visible in `git log` (e.g., `Update Landing`, `Add PRD.md`). Prefix with scope (`ui:`, `supabase:`) when helpful.
-- Every PR should describe user-impacting changes, list commands executed (dev/lint/typecheck/tests), attach UI screenshots for visual changes, and reference Supabase migration IDs or tickets.
-- See `AGENTS.md` for deeper contributor guidance on style, testing philosophy, and security expectations.
+```
+![PrivyCredit Hero](docs/assets/privycredit-hero.png)
+```
