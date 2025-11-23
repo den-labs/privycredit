@@ -50,6 +50,32 @@ const getStepFromProgress = (progress: number) => {
   return 1;
 };
 
+const getFriendlyErrorMessage = (err: any) => {
+  const errorParts = [
+    err,
+    err?.cause,
+  ];
+
+  const hasRejectionSignal = errorParts.some((part) => {
+    if (!part) return false;
+    if (part.code === 4001) return true;
+    if (typeof part.name === 'string' && part.name.toLowerCase().includes('rejected')) return true;
+
+    return [part.shortMessage, part.message, part.details]
+      .filter((msg): msg is string => typeof msg === 'string')
+      .some((msg) => {
+        const lower = msg.toLowerCase();
+        return lower.includes('user rejected') || lower.includes('user denied');
+      });
+  });
+
+  if (hasRejectionSignal) {
+    return 'La firma fue cancelada manualmente. No se envió nada a la red, puedes volver a intentarlo cuando estés listo.';
+  }
+
+  return err?.message || 'Ocurrió un error inesperado al generar la prueba.';
+};
+
 export default function GenerateProof() {
   const { setCurrentScreen, setCurrentProof } = useApp();
   const { address } = useAccount();
@@ -120,7 +146,7 @@ export default function GenerateProof() {
       setCurrentScreen(mockProof.status === 'apto' ? 'result-apto' : 'result-casi');
     } catch (err: any) {
       console.error('Error generating proof:', err);
-      setError(err.message || 'Error al generar la prueba');
+      setError(getFriendlyErrorMessage(err));
       hasSubmittedRef.current = false;
     }
   }, [address, chainId, walletClient, setCurrentProof, setCurrentScreen]);
