@@ -53,7 +53,14 @@ export default function ShareProof() {
               </p>
             </div>
             <div className="bg-dark/50 rounded-lg p-3 mb-3">
-              <p className="text-sm text-gray-400 font-mono break-all">{shareLink}</p>
+              <a
+                href={shareLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-accent font-mono break-all hover:underline"
+              >
+                {shareLink}
+              </a>
             </div>
             <button
               onClick={handleCopy}
