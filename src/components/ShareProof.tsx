@@ -12,7 +12,12 @@ export default function ShareProof() {
     return null;
   }
 
-  const shareLink = `https://privycredit.app/verify/${currentProof.blockchain_proof_id}`;
+  const shareBase =
+    typeof window !== 'undefined' && import.meta.env.DEV
+      ? window.location.origin
+      : import.meta.env.VITE_PUBLIC_SHARE_BASE ?? 'https://privycredit.vercel.app';
+  const normalizedBase = shareBase.endsWith('/') ? shareBase.slice(0, -1) : shareBase;
+  const shareLink = `${normalizedBase}/verify/${currentProof.blockchain_proof_id}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareLink);
