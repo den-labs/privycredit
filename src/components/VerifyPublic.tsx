@@ -124,18 +124,25 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
           },
         };
 
-        const logs = await publicClient.getContractEvents({
-          address: CONTRACT_ADDRESS,
-          abi: CONTRACT_ABI,
-          eventName: 'ProofSubmitted',
-          args: {
-            proofId: normalizedProofId,
-          },
-          fromBlock: 0n,
-        });
+        try {
+          const latestBlock = await publicClient.getBlockNumber();
+          const lookbackWindow = 2_000_000n;
+          const fromBlock = latestBlock > lookbackWindow ? latestBlock - lookbackWindow : 0n;
+          const logs = await publicClient.getContractEvents({
+            address: CONTRACT_ADDRESS,
+            abi: CONTRACT_ABI,
+            eventName: 'ProofSubmitted',
+            args: {
+              proofId: normalizedProofId,
+            },
+            fromBlock,
+          });
 
-        if (logs.length > 0) {
-          proofView.txHash = logs[logs.length - 1].transactionHash;
+          if (logs.length > 0) {
+            proofView.txHash = logs[logs.length - 1].transactionHash;
+          }
+        } catch (logsError) {
+          console.warn('No pudimos obtener los logs de ProofSubmitted:', logsError);
         }
 
         if (!cancelled) {
