@@ -120,7 +120,7 @@ export default function ConnectWallet() {
                   type="checkbox"
                   checked={consentData}
                   onChange={(e) => setConsentData(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded border-dark-border text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800"
+                  className="mt-1 w-5 h-5 rounded border-dark-border text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
                 />
                 <div className="flex-1">
                   <p className="text-light text-sm font-medium mb-1">
@@ -138,7 +138,7 @@ export default function ConnectWallet() {
                   type="checkbox"
                   checked={consentPrivacy}
                   onChange={(e) => setConsentPrivacy(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded border-dark-border text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800"
+                  className="mt-1 w-5 h-5 rounded border-dark-border text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
                 />
                 <div className="flex-1">
                   <p className="text-light text-sm font-medium mb-1">
