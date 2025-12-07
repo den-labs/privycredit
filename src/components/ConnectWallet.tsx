@@ -66,7 +66,7 @@ export default function ConnectWallet() {
                 <button
                   onClick={handleConnect}
                   disabled={isConnecting}
-                  className="w-full bg-accent hover:bg-primary-dark disabled:bg-gray-600 text-light py-3 rounded-xl font-semibold transition-all disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark disabled:bg-gray-600 disabled:cursor-not-allowed text-dark py-3 rounded-xl font-semibold transition-all"
                 >
                   {isConnecting ? 'Conectando...' : 'Conectar Wallet'}
                 </button>
@@ -185,7 +185,7 @@ export default function ConnectWallet() {
           <button
             onClick={handleContinue}
             disabled={!canContinue}
-            className="w-full bg-accent hover:bg-primary-dark disabled:bg-gray-600 disabled:cursor-not-allowed text-light py-3 rounded-xl font-semibold transition-all"
+            className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark disabled:bg-gray-600 disabled:cursor-not-allowed text-dark py-3 rounded-xl font-semibold transition-all"
           >
             Continuar
           </button>

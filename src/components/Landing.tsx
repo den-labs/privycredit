@@ -32,7 +32,7 @@ export default function Landing() {
         <div className="text-center mb-16">
           <button
             onClick={() => setCurrentScreen('connect')}
-            className="bg-accent hover:bg-primary-dark text-dark px-6 py-3 rounded-full text-xl font-bold shadow-2xl transition-all transform hover:scale-105"
+            className="inline-flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark text-dark px-6 py-3 rounded-xl font-semibold transition-all"
           >
             Probar ahora
           </button>
