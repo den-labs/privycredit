@@ -12,9 +12,18 @@ import VerifierGate from './components/VerifierGate';
 import NetworkAlert from './components/NetworkAlert';
 import WalletControls from './components/WalletControls';
 import Footer from './components/Footer';
+import VerifyPublic from './components/VerifyPublic';
 
 function App() {
   const { currentScreen } = useApp();
+  const verifyPathId =
+    typeof window !== 'undefined' && window.location.pathname.startsWith('/verify/')
+      ? decodeURIComponent(window.location.pathname.replace('/verify/', '').split('/')[0])
+      : null;
+
+  if (verifyPathId) {
+    return <VerifyPublic proofId={verifyPathId} />;
+  }
 
   const renderScreen = () => {
     switch (currentScreen) {
