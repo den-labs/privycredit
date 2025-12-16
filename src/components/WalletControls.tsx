@@ -1,8 +1,14 @@
-import { AppKitButton, AppKitNetworkButton } from '@reown/appkit/react';
+import { AppKitNetworkButton, useAppKit } from '@reown/appkit/react';
+import { Wallet } from 'lucide-react';
 import { useAccount } from 'wagmi';
 
 export default function WalletControls() {
   const { isConnected } = useAccount();
+  const { open } = useAppKit();
+
+  const handleOpen = () => {
+    open?.();
+  };
 
   return (
     <div className="fixed top-4 right-4 z-40">
@@ -13,7 +19,13 @@ export default function WalletControls() {
             <AppKitNetworkButton />
           </div>
         )}
-        <AppKitButton />
+        <button
+          onClick={handleOpen}
+          className="flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark text-dark px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all"
+        >
+          <Wallet className="w-4 h-4" />
+          {isConnected ? 'Gestionar wallet' : 'Conectar wallet'}
+        </button>
       </div>
     </div>
   );

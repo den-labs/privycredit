@@ -66,7 +66,7 @@ export default function ConnectWallet() {
                 <button
                   onClick={handleConnect}
                   disabled={isConnecting}
-                  className="w-full bg-accent hover:bg-primary-dark disabled:bg-gray-600 text-light py-3 rounded-xl font-semibold transition-all disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark disabled:bg-gray-600 disabled:cursor-not-allowed text-dark py-3 rounded-xl font-semibold transition-all"
                 >
                   {isConnecting ? 'Conectando...' : 'Conectar Wallet'}
                 </button>
@@ -120,7 +120,7 @@ export default function ConnectWallet() {
                   type="checkbox"
                   checked={consentData}
                   onChange={(e) => setConsentData(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded border-dark-border text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800"
+                  className="mt-1 w-5 h-5 rounded border-dark-border text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
                 />
                 <div className="flex-1">
                   <p className="text-light text-sm font-medium mb-1">
@@ -138,7 +138,7 @@ export default function ConnectWallet() {
                   type="checkbox"
                   checked={consentPrivacy}
                   onChange={(e) => setConsentPrivacy(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded border-dark-border text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800"
+                  className="mt-1 w-5 h-5 rounded border-dark-border text-green-500 focus:ring-green-500 focus:ring-offset-gray-800"
                 />
                 <div className="flex-1">
                   <p className="text-light text-sm font-medium mb-1">
@@ -185,7 +185,7 @@ export default function ConnectWallet() {
           <button
             onClick={handleContinue}
             disabled={!canContinue}
-            className="w-full bg-accent hover:bg-primary-dark disabled:bg-gray-600 disabled:cursor-not-allowed text-light py-3 rounded-xl font-semibold transition-all"
+            className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark disabled:bg-gray-600 disabled:cursor-not-allowed text-dark py-3 rounded-xl font-semibold transition-all"
           >
             Continuar
           </button>
