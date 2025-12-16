@@ -1,10 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  --app-bg: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.25), transparent 55%),
+    radial-gradient(circle at 80% 70%, rgba(129, 140, 248, 0.22), transparent 60%),
+    linear-gradient(180deg, #020617 0%, #0f172a 50%, #1e3a8a 100%);
   --grid-bg: radial-gradient(circle at top, rgba(100, 248, 206, 0.25), transparent 55%),
     radial-gradient(circle at 20% 20%, rgba(79, 125, 255, 0.25), transparent 35%),
     #030711;
@@ -18,8 +21,9 @@
 @layer base {
   body {
     @apply text-dark font-sans;
-    background: var(--grid-bg);
+    background: var(--app-bg);
     color: #f5f7ff;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
     font-optical-sizing: auto;
     min-height: 100vh;
@@ -50,8 +54,8 @@
 
 @layer components {
   .app-shell {
-    @apply bg-light text-dark min-h-screen flex flex-col;
-    background-image: var(--grid-bg);
+    @apply text-dark min-h-screen flex flex-col;
+    background-image: var(--app-bg);
   }
 
   .page-section {
@@ -148,4 +152,278 @@
   .hero-visual img {
     @apply object-cover w-full h-full;
   }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 6s ease-in-out infinite;
+}
+
+@keyframes pulseSlow {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+.hero-intro .hero-item {
+  filter: blur(10px);
+  transform: translateY(18px);
+  animation: fadeSlideBlurIn 0.9s ease-out both;
+}
+
+.hero-item-1 {
+  animation-delay: 0.05s;
+}
+
+.hero-item-2 {
+  animation-delay: 0.15s;
+}
+
+.hero-item-3 {
+  animation-delay: 0.25s;
+}
+
+.hero-item-4 {
+  animation-delay: 0.35s;
+}
+
+.hero-item-5 {
+  animation-delay: 0.45s;
+}
+
+@keyframes fadeSlideBlurIn {
+  from {
+    filter: blur(10px);
+    transform: translateY(18px);
+  }
+  to {
+    filter: blur(0px);
+    transform: translateY(0px);
+  }
+}
+
+.text-clip-letter {
+  transform: translateY(-100%);
+  animation-name: textClipDown;
+  animation-duration: 0.7s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes textClipDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+.hero-bg-clip::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.35), transparent 55%),
+    radial-gradient(circle at 80% 70%, rgba(129, 140, 248, 0.4), transparent 55%);
+  mix-blend-mode: screen;
+  clip-path: inset(0 100% 0 0);
+  animation: clipColumns 1.4s ease-out both;
+}
+
+@keyframes clipColumns {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  40% {
+    clip-path: inset(0 66% 0 0);
+  }
+  70% {
+    clip-path: inset(0 33% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.btn-border-beam::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(59, 130, 246, 0.6) 60deg,
+    transparent 120deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transform: rotate(0deg);
+  transition: opacity 0.25s ease-out;
+  animation: borderBeam 2.2s linear infinite;
+  pointer-events: none;
+}
+
+.btn-border-beam:hover::before {
+  opacity: 1;
+}
+
+@keyframes borderBeam {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo-marquee-container {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.logo-marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-block: 0.25rem;
+  animation: logoMarquee 24s linear infinite;
+  will-change: transform;
+}
+
+@keyframes logoMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.card-rotate {
+  animation: cardRotateIn 0.9s ease-out both;
+}
+
+@keyframes cardRotateIn {
+  from {
+    transform: rotateY(8deg) translateY(8px);
+    filter: blur(8px);
+  }
+  to {
+    transform: rotateY(0deg) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.hero-card-content {
+  animation: cardContentFade 0.7s ease-out both;
+}
+
+@keyframes cardContentFade {
+  from {
+    transform: translateY(12px);
+    filter: blur(6px);
+  }
+  to {
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.card-flashlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(59, 130, 246, 0.32),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+  pointer-events: none;
+}
+
+.card-flashlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  transition: box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+  pointer-events: none;
+}
+
+.card-flashlight:hover::before {
+  opacity: 1;
+}
+
+.card-flashlight:hover::after {
+  border-color: rgba(96, 165, 250, 0.5);
+  box-shadow: 0 0 32px -8px rgba(37, 99, 235, 0.65);
+}
+
+.testimonial-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+.testimonial-track {
+  display: inline-flex;
+  align-items: stretch;
+  animation: testimonialMarquee 40s linear infinite;
+  will-change: transform;
+}
+
+@keyframes testimonialMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes meterShine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-meter-shine {
+  animation: meterShine 2.3s linear infinite;
 }

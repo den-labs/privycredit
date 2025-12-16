@@ -1,7 +1,8 @@
-import { AlertCircle, X } from 'lucide-react';
+import { AlertCircle, Zap, X } from 'lucide-react';
 import { useState } from 'react';
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
 import { SCROLL_SEPOLIA_CHAIN_ID, SCROLL_SEPOLIA_NAME } from '../lib/contract';
+import { Button } from './ui';
 
 export default function NetworkAlert() {
   const { isConnected } = useAccount();
@@ -22,24 +23,41 @@ export default function NetworkAlert() {
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4">
-      <div className="glass-panel p-4 border-amber-400/40 bg-amber-500/10 backdrop-blur-xl">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-6 h-6 text-amber-300 flex-shrink-0 mt-0.5" />
-          <div className="flex-1 text-sm text-amber-50">
-            <h3 className="font-semibold text-white mb-1">Red incorrecta</h3>
-            <p className="mb-3">
-              Esta aplicación solo funciona en {SCROLL_SEPOLIA_NAME}. Cambia tu red para continuar.
-            </p>
-            <button
-              onClick={handleSwitchNetwork}
-              disabled={isPending}
-              className={`btn-secondary w-full justify-center ${isPending ? 'opacity-60 cursor-not-allowed' : ''}`}
-            >
-              {isPending ? 'Cambiando…' : `Cambiar a ${SCROLL_SEPOLIA_NAME}`}
-            </button>
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] max-w-2xl w-full px-4">
+      <div className="border border-amber-500/10 bg-gradient-to-r from-amber-900/80 to-amber-700/40 backdrop-blur-xl rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+        <div className="flex items-start gap-4 px-6 py-4">
+          <div className="w-10 h-10 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
+            <AlertCircle className="w-5 h-5 text-amber-400" />
           </div>
-          <button onClick={() => setDismissed(true)} className="btn-ghost px-2 py-1">
+          <div className="flex-1 text-sm text-amber-50">
+            <p className="uppercase text-[11px] tracking-[0.3em] text-amber-200/70 mb-1 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              Scroll Testnet
+            </p>
+            <h3 className="text-white font-semibold text-base mb-1">Necesitas cambiar de red</h3>
+            <p className="text-amber-100/80 mb-3">
+              Esta dApp opera únicamente en {SCROLL_SEPOLIA_NAME}. Cambia tu wallet para continuar con el flujo.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={handleSwitchNetwork}
+                disabled={isPending}
+                className={`w-full justify-center !bg-amber-500 hover:!bg-amber-400 !border-amber-400/70 ${
+                  isPending ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
+              >
+                <Zap className="w-4 h-4" />
+                {isPending ? 'Cambiando…' : `Cambiar a ${SCROLL_SEPOLIA_NAME}`}
+              </Button>
+              <button
+                onClick={() => setDismissed(true)}
+                className="text-xs text-amber-100/60 hover:text-white transition-colors"
+              >
+                Entiendo el riesgo
+              </button>
+            </div>
+          </div>
+          <button onClick={() => setDismissed(true)} className="text-amber-200/60 hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>

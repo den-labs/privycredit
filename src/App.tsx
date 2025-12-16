@@ -51,12 +51,12 @@ function App() {
   };
 
   return (
-    <div className="app-shell antialiased">
+    <div className="app-shell antialiased min-h-screen">
       <NetworkAlert />
       <WalletControls />
-      <div className="flex-1">
+      <main className="flex-1 pt-28 pb-16">
         {renderScreen()}
-      </div>
+      </main>
       <Footer />
     </div>
   );
