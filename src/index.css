@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,8 +6,9 @@
 
 @layer base {
   body {
-    @apply bg-dark text-light font-sans;
+    @apply bg-light text-dark font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-optical-sizing: auto;
   }
 }
 
@@ -17,10 +18,18 @@
   }
 
   .gradient-card {
-    background: linear-gradient(135deg, #2D2D2D 0%, #171717 100%);
+    background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, #A6DD05 0%, #8bc004 100%);
+    background: linear-gradient(135deg, #00A3E0 0%, #0082B3 100%);
+  }
+
+  .gradient-secondary {
+    background: linear-gradient(135deg, #99CBEB 0%, #00A3E0 100%);
+  }
+
+  .gradient-light {
+    background: linear-gradient(135deg, #F5F5F5 0%, #E8F4FC 100%);
   }
 }

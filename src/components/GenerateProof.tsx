@@ -183,16 +183,16 @@ export default function GenerateProof() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-dark via-dark-card to-dark flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-red-900/50 border border-red-500 rounded-3xl p-8 text-center">
-          <div className="bg-red-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+      <div className="min-h-screen bg-gradient-to-br from-light via-light-card to-light flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-red-50 border border-red-300 rounded-3xl p-8 text-center shadow-lg">
+          <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">⚠️</span>
           </div>
-          <h2 className="text-xl font-bold text-light mb-3">Error al generar prueba</h2>
-          <p className="text-red-200 text-sm mb-6">{error}</p>
+          <h2 className="text-xl font-bold text-dark mb-3">Error al generar prueba</h2>
+          <p className="text-red-700 text-sm mb-6">{error}</p>
           <button
             onClick={() => setCurrentScreen('connect')}
-            className="bg-white text-red-900 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-all"
+            className="bg-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-700 transition-all"
           >
             Intentar de nuevo
           </button>
@@ -202,29 +202,29 @@ export default function GenerateProof() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-card to-dark flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-light via-light-card to-light flex items-center justify-center px-4">
       <div className="max-w-2xl w-full">
         <div className="text-center mb-12">
-          <div className="inline-flex bg-accent/20 rounded-full p-6 mb-6 animate-pulse">
+          <div className="inline-flex bg-secondary/30 rounded-full p-6 mb-6 animate-pulse">
             <Shield className="w-16 h-16 text-accent" />
           </div>
-          <h1 className="text-3xl font-bold text-light mb-3">
+          <h1 className="text-3xl font-bold text-dark mb-3">
             Generando tu prueba sellada
           </h1>
-          <p className="text-gray-400">
+          <p className="text-dark-muted">
             Esto tomará aproximadamente 30 segundos
           </p>
         </div>
 
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8 mb-8">
+        <div className="bg-light-card/80 backdrop-blur-sm rounded-3xl border border-light-border shadow-lg p-8 mb-8">
           <div className="mb-8">
             <div className="flex justify-between items-center mb-3">
-              <span className="text-sm font-medium text-gray-400">Progreso</span>
-              <span className="text-sm font-bold text-light">{Math.round(progress)}%</span>
+              <span className="text-sm font-medium text-dark-muted">Progreso</span>
+              <span className="text-sm font-bold text-dark">{Math.round(progress)}%</span>
             </div>
-            <div className="w-full bg-dark-card rounded-full h-3 overflow-hidden">
+            <div className="w-full bg-light rounded-full h-3 overflow-hidden border border-light-border">
               <div
-                className="bg-gradient-to-r from-green-400 via-green-500 to-green-600 h-full rounded-full transition-all duration-300 ease-out"
+                className="bg-gradient-to-r from-accent via-primary-dark to-accent h-full rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -236,35 +236,35 @@ export default function GenerateProof() {
                 key={step.id}
                 className={`flex items-start gap-4 p-4 rounded-xl transition-all ${
                   currentStep === step.id
-                    ? 'bg-accent/20 border border-accent/50'
+                    ? 'bg-secondary/30 border border-accent/50'
                     : currentStep > step.id
-                    ? 'bg-green-900/20 border border-green-500/50'
-                    : 'bg-dark-card/30 border border-dark-border/50'
+                    ? 'bg-green-50 border border-green-300'
+                    : 'bg-light border border-light-border'
                 }`}
               >
                 <div className="flex-shrink-0">
                   {currentStep > step.id ? (
-                    <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                      <span className="text-light text-lg">✓</span>
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-lg">✓</span>
                     </div>
                   ) : currentStep === step.id ? (
                     <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                      <Loader className="w-5 h-5 text-light animate-spin" />
+                      <Loader className="w-5 h-5 text-white animate-spin" />
                     </div>
                   ) : (
-                    <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                      <span className="text-gray-400 text-sm font-bold">{step.id}</span>
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-dark-subtle text-sm font-bold">{step.id}</span>
                     </div>
                   )}
                 </div>
                 <div className="flex-1">
                   <h3 className={`font-semibold mb-1 ${
-                    currentStep >= step.id ? 'text-light' : 'text-gray-500'
+                    currentStep >= step.id ? 'text-dark' : 'text-dark-subtle'
                   }`}>
                     {step.label}
                   </h3>
                   <p className={`text-sm ${
-                    currentStep >= step.id ? 'text-gray-400' : 'text-gray-600'
+                    currentStep >= step.id ? 'text-dark-muted' : 'text-dark-subtle'
                   }`}>
                     {step.description}
                   </p>
@@ -274,8 +274,8 @@ export default function GenerateProof() {
           </div>
         </div>
 
-        <div className="bg-dark-card/30 border border-accent/50 rounded-2xl p-4 text-center">
-          <p className="text-light text-sm">
+        <div className="bg-secondary/20 border border-accent/30 rounded-2xl p-4 text-center">
+          <p className="text-dark text-sm">
             <strong>Tu información no sale en claro.</strong> Solo se comparten bandas de evaluación.
           </p>
         </div>

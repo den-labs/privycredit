@@ -30,29 +30,29 @@ export default function ShareProof() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-card to-dark py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-light via-light-card to-light py-8 px-4">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex bg-accent/20 rounded-full p-6 mb-4">
+          <div className="inline-flex bg-secondary/30 rounded-full p-6 mb-4">
             <Share2 className="w-16 h-16 text-accent" />
           </div>
-          <h1 className="text-3xl font-bold text-light mb-3">Compartir prueba</h1>
-          <p className="text-light">
+          <h1 className="text-3xl font-bold text-dark mb-3">Compartir prueba</h1>
+          <p className="text-dark">
             Genera un enlace seguro para compartir con prestamistas
           </p>
         </div>
 
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8 mb-6">
-          <h2 className="text-xl font-semibold text-light mb-6">Enlace de verificación</h2>
+        <div className="bg-light-card/80 backdrop-blur-sm rounded-3xl border border-light-border shadow-lg p-8 mb-6">
+          <h2 className="text-xl font-semibold text-dark mb-6">Enlace de verificación</h2>
 
-          <div className="bg-dark-card/50 rounded-xl p-4 mb-4">
+          <div className="bg-light rounded-xl p-4 mb-4 border border-light-border">
             <div className="flex items-center gap-3 mb-3">
-              <Clock className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-              <p className="text-sm text-light">
-                Este enlace expira en <strong className="text-light">{daysUntilExpiry} días</strong>
+              <Clock className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+              <p className="text-sm text-dark">
+                Este enlace expira en <strong className="text-dark">{daysUntilExpiry} días</strong>
               </p>
             </div>
-            <div className="bg-dark/50 rounded-lg p-3 mb-3">
+            <div className="bg-light-card rounded-lg p-3 mb-3 border border-light-border">
               <a
                 href={shareLink}
                 target="_blank"
@@ -64,7 +64,7 @@ export default function ShareProof() {
             </div>
             <button
               onClick={handleCopy}
-              className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark text-dark py-3 rounded-lg font-semibold transition-all"
+              className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark text-white py-3 rounded-lg font-semibold transition-all shadow-md"
             >
               {copied ? (
                 <>
@@ -80,60 +80,60 @@ export default function ShareProof() {
             </button>
           </div>
 
-          <div className="bg-dark-card/30 border border-accent/50 rounded-xl p-4 mb-6">
-            <p className="text-light text-sm leading-relaxed">
+          <div className="bg-secondary/20 border border-accent/30 rounded-xl p-4 mb-6">
+            <p className="text-dark text-sm leading-relaxed">
               <strong>Qué se comparte:</strong> Este enlace solo muestra tu resultado
               (Apto/Casi) y las bandas por factor. No se revelan montos, contrapartes
               ni información personal.
             </p>
           </div>
 
-          <div className="border-t border-dark-border pt-6">
-            <h3 className="font-semibold text-light mb-4">Compartir con aliados</h3>
+          <div className="border-t border-light-border pt-6">
+            <h3 className="font-semibold text-dark mb-4">Compartir con aliados</h3>
             <div className="space-y-3">
-              <button className="w-full p-4 bg-dark-card/30 hover:bg-dark-card/50 rounded-xl text-left transition-all flex items-center justify-between">
+              <button className="w-full p-4 bg-light hover:bg-secondary/20 rounded-xl text-left transition-all flex items-center justify-between border border-light-border">
                 <div>
-                  <p className="font-medium text-light mb-1">Cooperativa A</p>
-                  <p className="text-xs text-gray-400">Envío directo a su plataforma</p>
+                  <p className="font-medium text-dark mb-1">Cooperativa A</p>
+                  <p className="text-xs text-dark-muted">Envío directo a su plataforma</p>
                 </div>
-                <ExternalLink className="w-5 h-5 text-gray-400" />
+                <ExternalLink className="w-5 h-5 text-dark-muted" />
               </button>
 
-              <button className="w-full p-4 bg-dark-card/30 hover:bg-dark-card/50 rounded-xl text-left transition-all flex items-center justify-between">
+              <button className="w-full p-4 bg-light hover:bg-secondary/20 rounded-xl text-left transition-all flex items-center justify-between border border-light-border">
                 <div>
-                  <p className="font-medium text-light mb-1">Fintech B</p>
-                  <p className="text-xs text-gray-400">Integración automática</p>
+                  <p className="font-medium text-dark mb-1">Fintech B</p>
+                  <p className="text-xs text-dark-muted">Integración automática</p>
                 </div>
-                <ExternalLink className="w-5 h-5 text-gray-400" />
+                <ExternalLink className="w-5 h-5 text-dark-muted" />
               </button>
 
-              <button className="w-full p-4 bg-dark-card/30 hover:bg-dark-card/50 rounded-xl text-left transition-all flex items-center justify-between">
+              <button className="w-full p-4 bg-light hover:bg-secondary/20 rounded-xl text-left transition-all flex items-center justify-between border border-light-border">
                 <div>
-                  <p className="font-medium text-light mb-1">Banco C</p>
-                  <p className="text-xs text-gray-400">Portal de solicitudes</p>
+                  <p className="font-medium text-dark mb-1">Banco C</p>
+                  <p className="text-xs text-dark-muted">Portal de solicitudes</p>
                 </div>
-                <ExternalLink className="w-5 h-5 text-gray-400" />
+                <ExternalLink className="w-5 h-5 text-dark-muted" />
               </button>
             </div>
           </div>
         </div>
 
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-2xl border border-dark-border p-6 mb-6">
-          <h3 className="text-sm font-semibold text-light mb-3">Detalles de la prueba</h3>
+        <div className="bg-light-card/80 backdrop-blur-sm rounded-2xl border border-light-border shadow-md p-6 mb-6">
+          <h3 className="text-sm font-semibold text-dark mb-3">Detalles de la prueba</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-400">Estado:</span>
-              <span className="text-light font-semibold capitalize">{currentProof.status}</span>
+              <span className="text-dark-muted">Estado:</span>
+              <span className="text-dark font-semibold capitalize">{currentProof.status}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Creada:</span>
-              <span className="text-light">
+              <span className="text-dark-muted">Creada:</span>
+              <span className="text-dark">
                 {new Date(currentProof.created_at).toLocaleDateString()}
               </span>
             </div>
             {currentProof.tx_hash && (
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">Blockchain:</span>
+                <span className="text-dark-muted">Blockchain:</span>
                 <a
                   href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${currentProof.tx_hash}`}
                   target="_blank"
@@ -150,7 +150,7 @@ export default function ShareProof() {
 
         <button
           onClick={() => setCurrentScreen(currentProof.status === 'apto' ? 'result-apto' : 'result-casi')}
-          className="text-gray-400 hover:text-light text-sm transition-colors mx-auto block"
+          className="text-dark-muted hover:text-dark text-sm transition-colors mx-auto block"
         >
           ← Volver a resultados
         </button>

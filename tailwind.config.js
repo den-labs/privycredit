@@ -4,20 +4,25 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['Montserrat', 'system-ui', 'sans-serif'],
       },
       colors: {
         primary: {
-          DEFAULT: '#A6DD05',
-          dark: '#8bc004',
-          light: '#b8e534',
+          DEFAULT: '#00A3E0',
+          dark: '#0082B3',
+          light: '#99CBEB',
         },
-        accent: '#A6DD05',
-        light: '#F1F1F1',
+        accent: '#00A3E0',
+        secondary: '#99CBEB',
+        light: {
+          DEFAULT: '#F5F5F5',
+          card: '#FFFFFF',
+          border: '#E0E0E0',
+        },
         dark: {
-          DEFAULT: '#171717',
-          card: '#2D2D2D',
-          border: '#3a3a3a',
+          DEFAULT: '#000034',
+          muted: '#4a4a6a',
+          subtle: '#6b6b8a',
         },
       },
       borderRadius: {

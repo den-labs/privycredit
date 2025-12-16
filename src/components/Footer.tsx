@@ -14,21 +14,21 @@ export default function Footer() {
   const isCorrectNetwork = chainId === SCROLL_SEPOLIA_CHAIN_ID;
 
   return (
-    <footer className="bg-dark-card/50 border-t border-dark-border py-6 mt-auto">
+    <footer className="bg-light-card/80 border-t border-light-border py-6 mt-auto shadow-sm">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Shield className="w-5 h-5 text-accent" />
             <div>
-              <p className="text-sm font-semibold text-light">PrivyCredit Demo</p>
-              <p className="text-xs text-gray-400">Pruebas selladas on-chain</p>
+              <p className="text-sm font-semibold text-dark">PrivyCredit Demo</p>
+              <p className="text-xs text-dark-muted">Pruebas selladas on-chain</p>
             </div>
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">Red:</span>
-              <span className={`text-xs font-semibold ${isConnected && isCorrectNetwork ? 'text-accent' : 'text-light'}`}>
+              <span className="text-xs text-dark-muted">Red:</span>
+              <span className={`text-xs font-semibold ${isConnected && isCorrectNetwork ? 'text-accent' : 'text-dark'}`}>
                 {SCROLL_SEPOLIA_NAME}
               </span>
               {isConnected && (
@@ -39,7 +39,7 @@ export default function Footer() {
               href={`${SCROLL_SEPOLIA_EXPLORER}/address/${CONTRACT_ADDRESS}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-gray-400 hover:text-accent transition-colors flex items-center gap-1"
+              className="text-xs text-dark-muted hover:text-accent transition-colors flex items-center gap-1"
             >
               Contrato: {CONTRACT_ADDRESS.substring(0, 6)}...{CONTRACT_ADDRESS.substring(CONTRACT_ADDRESS.length - 4)}
               <ExternalLink className="w-3 h-3" />
