@@ -14,17 +14,6 @@ type VerificationResult = {
   createdAt: bigint;
 } | null;
 
-const getBandColor = (band: BandLevel) => {
-  switch (band) {
-    case 'A':
-      return 'bg-green-100 text-green-700 border-green-300';
-    case 'B':
-      return 'bg-yellow-100 text-yellow-700 border-yellow-300';
-    case 'C':
-      return 'bg-red-100 text-red-700 border-red-300';
-  }
-};
-
 export default function VerifierGate() {
   const [proofId, setProofId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,7 +31,7 @@ export default function VerifierGate() {
     setResult(null);
 
     try {
-      const proofIdHex = proofId.startsWith('0x') ? proofId as `0x${string}` : `0x${proofId}` as `0x${string}`;
+      const proofIdHex = proofId.startsWith('0x') ? (proofId as `0x${string}`) : (`0x${proofId}` as `0x${string}`);
 
       const data = await publicClient.readContract({
         address: CONTRACT_ADDRESS,
@@ -80,95 +69,73 @@ export default function VerifierGate() {
     const isApto = result.stability === 'A' && result.inflows === 'A' && result.risk === 'A';
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-light via-light-card to-light py-8 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-8">
-            <div className={`inline-flex rounded-full p-6 mb-4 ${
-              isApto ? 'bg-green-100' : 'bg-yellow-100'
-            }`}>
-              <Shield className={`w-16 h-16 ${isApto ? 'text-green-500' : 'text-yellow-500'}`} />
+      <div className="page-section">
+        <div className="section-shell max-w-3xl mx-auto space-y-6">
+          <div className="text-center space-y-3">
+            <div
+              className={`inline-flex rounded-full p-6 ${
+                isApto ? 'border-green-400/40 bg-green-500/10' : 'border-amber-400/40 bg-amber-500/10'
+              } border`}
+            >
+              <Shield className={`w-16 h-16 ${isApto ? 'text-green-300' : 'text-amber-200'}`} />
             </div>
-            <h1 className="text-3xl font-bold text-dark mb-3">
+            <h1 className="text-3xl font-semibold text-white">
               {isApto ? 'Verificación: Apto' : 'Verificación: Requiere revisión'}
             </h1>
-            <p className="text-dark">Resultado de la prueba sellada</p>
+            <p className="text-dark-muted">Resultado de la prueba sellada compartida por el solicitante.</p>
           </div>
 
-          <div className="bg-light-card/80 backdrop-blur-sm rounded-3xl border border-light-border shadow-lg p-8 mb-6">
-            <h2 className="text-xl font-semibold text-dark mb-6">Factores evaluados</h2>
-
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center justify-between p-4 bg-light rounded-xl border border-light-border">
-                <div>
-                  <h3 className="font-medium text-dark mb-1">Estabilidad</h3>
-                  <p className="text-xs text-dark-muted">Consistencia de saldos</p>
+          <div className="glass-panel p-8 space-y-6">
+            <h2 className="text-xl font-semibold text-white">Factores evaluados</h2>
+            <div className="space-y-4">
+              {[
+                { label: 'Estabilidad', description: 'Consistencia de saldos', value: result.stability },
+                { label: 'Inflows', description: 'Ingresos recurrentes', value: result.inflows },
+                { label: 'Riesgo', description: 'Gestión de volatilidad', value: result.risk },
+              ].map((factor) => (
+                <div
+                  key={factor.label}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-white/10 bg-white/5 p-4"
+                >
+                  <div>
+                    <h3 className="text-white font-medium">{factor.label}</h3>
+                    <p className="text-xs text-dark-muted">{factor.description}</p>
+                  </div>
+                  <span className="band-pill" data-tone={factor.value}>
+                    Banda {factor.value}
+                  </span>
                 </div>
-                <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(result.stability)}`}>
-                  Banda {result.stability}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-light rounded-xl border border-light-border">
-                <div>
-                  <h3 className="font-medium text-dark mb-1">Inflows</h3>
-                  <p className="text-xs text-dark-muted">Ingresos recurrentes</p>
-                </div>
-                <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(result.inflows)}`}>
-                  Banda {result.inflows}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-light rounded-xl border border-light-border">
-                <div>
-                  <h3 className="font-medium text-dark mb-1">Riesgo</h3>
-                  <p className="text-xs text-dark-muted">Gestión de volatilidad</p>
-                </div>
-                <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(result.risk)}`}>
-                  Banda {result.risk}
-                </span>
-              </div>
+              ))}
             </div>
-
-            <div className="bg-secondary/20 border border-accent/30 rounded-xl p-4 mb-6">
-              <p className="text-dark text-sm">
-                <strong>Sin PII:</strong> Esta verificación no expone montos, contrapartes
-                ni información personal del usuario. Solo muestra bandas de evaluación.
-              </p>
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-dark-muted">
+              <strong className="text-white">Privacidad garantizada:</strong> Solo se muestran bandas y estado de la
+              prueba. No se exponen montos ni contrapartes.
             </div>
-
             <div className="grid sm:grid-cols-2 gap-4">
-              <button className="bg-accent hover:bg-primary-dark text-white py-3 rounded-xl font-semibold transition-all shadow-md">
-                Solicitar underwriting
-              </button>
-              <button className="bg-light-card hover:bg-light border border-light-border text-dark py-3 rounded-xl font-semibold transition-all">
-                Descargar constancia
-              </button>
+              <button className="btn-primary w-full">Solicitar underwriting</button>
+              <button className="btn-secondary w-full">Descargar constancia</button>
             </div>
           </div>
 
-          <div className="bg-light-card/80 backdrop-blur-sm rounded-2xl border border-light-border shadow-md p-6 mb-6">
-            <h3 className="text-sm font-semibold text-dark mb-3">Metadatos de la prueba</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-dark-muted">Usuario:</span>
-                <span className="text-dark font-mono text-xs">
-                  {result.user.substring(0, 6)}...{result.user.substring(result.user.length - 4)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-dark-muted">Época:</span>
-                <span className="text-dark">{result.epoch.toString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-dark-muted">Creada:</span>
-                <span className="text-dark">
-                  {new Date(Number(result.createdAt) * 1000).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-dark-muted">Estado:</span>
-                <span className="text-green-600 font-semibold">Válida</span>
-              </div>
+          <div className="glass-panel p-6 space-y-3 text-sm text-dark-muted">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-dark-subtle">Metadatos</h3>
+            <div className="flex justify-between">
+              <span>Usuario:</span>
+              <span className="text-white font-mono text-xs">
+                {result.user.substring(0, 6)}...{result.user.substring(result.user.length - 4)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span>Época:</span>
+              <span className="text-white">{result.epoch.toString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Creada:</span>
+              <span className="text-white">{new Date(Number(result.createdAt) * 1000).toLocaleDateString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Estado:</span>
+              <span className="text-green-200 font-semibold">Válida</span>
             </div>
           </div>
 
@@ -177,7 +144,7 @@ export default function VerifierGate() {
               setResult(null);
               setProofId('');
             }}
-            className="text-dark-muted hover:text-dark text-sm transition-colors mx-auto block"
+            className="btn-ghost mx-auto"
           >
             ← Verificar otra prueba
           </button>
@@ -187,55 +154,53 @@ export default function VerifierGate() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-light via-light-card to-light py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex bg-secondary/30 rounded-full p-6 mb-4">
+    <div className="page-section">
+      <div className="section-shell max-w-2xl mx-auto space-y-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex rounded-full border border-white/15 bg-white/5 p-6">
             <Shield className="w-16 h-16 text-accent" />
           </div>
-          <h1 className="text-3xl font-bold text-dark mb-3">Portal de Verificación</h1>
-          <p className="text-dark">
-            Para prestamistas e instituciones financieras
-          </p>
+          <h1 className="text-3xl font-semibold text-white">Portal de Verificación</h1>
+          <p className="text-dark-muted">Para prestamistas e instituciones financieras.</p>
         </div>
 
-        <div className="bg-light-card/80 backdrop-blur-sm rounded-3xl border border-light-border shadow-lg p-8 mb-6">
-          <h2 className="text-xl font-semibold text-dark mb-4">Verificar prueba</h2>
-          <p className="text-dark-muted text-sm mb-6">
-            Ingresa el ID de prueba que te compartió el cliente para ver su resultado
-            y bandas de evaluación sin exponer información personal.
-          </p>
+        <div className="glass-panel p-8 space-y-6">
+          <div>
+            <h2 className="text-xl font-semibold text-white">Verificar prueba</h2>
+            <p className="text-dark-muted text-sm">
+              Ingresa el ID compartido para ver el resultado y las bandas correspondientes sin exponer información
+              sensible.
+            </p>
+          </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-300 rounded-xl p-4 mb-6">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <p className="text-red-700 text-sm">{error}</p>
+            <div className="rounded-3xl border border-red-400/40 bg-red-500/10 p-4 text-sm text-red-200">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-5 h-5" />
+                {error}
               </div>
             </div>
           )}
 
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-dark mb-2">
-              ID de prueba o enlace
-            </label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-dark-subtle">ID de prueba o enlace</label>
             <input
               type="text"
               value={proofId}
               onChange={(e) => setProofId(e.target.value)}
               placeholder="0x..."
-              className="w-full bg-light border border-light-border rounded-xl px-4 py-3 text-dark placeholder-dark-subtle focus:outline-none focus:ring-2 focus:ring-accent"
+              className="input-field font-mono"
             />
           </div>
 
           <button
             onClick={handleVerify}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark disabled:bg-gray-300 text-white py-3 rounded-xl font-semibold transition-all disabled:cursor-not-allowed shadow-md"
+            className={`btn-primary w-full ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {loading ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
                 Verificando...
               </>
             ) : (
@@ -247,12 +212,10 @@ export default function VerifierGate() {
           </button>
         </div>
 
-        <div className="bg-secondary/20 border border-accent/30 rounded-2xl p-6 text-center">
-          <h3 className="font-semibold text-dark mb-2">¿Qué verás?</h3>
-          <p className="text-dark text-sm">
-            Resultado (Apto/Casi) y bandas por factor. No se exponen montos,
-            contrapartes ni información personal del cliente.
-          </p>
+        <div className="glass-panel p-6 text-center text-sm text-dark-muted">
+          <h3 className="text-white font-semibold mb-2">¿Qué verás?</h3>
+          Resultado (Apto/Casi) y bandas por factor. No se exponen montos, contrapartes ni información personal del
+          cliente.
         </div>
       </div>
     </div>

@@ -51,7 +51,7 @@ function App() {
   };
 
   return (
-    <div className="antialiased flex flex-col min-h-screen">
+    <div className="app-shell antialiased">
       <NetworkAlert />
       <WalletControls />
       <div className="flex-1">

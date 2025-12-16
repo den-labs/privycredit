@@ -22,28 +22,24 @@ export default function NetworkAlert() {
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4">
-      <div className="bg-amber-50 backdrop-blur-sm border-2 border-amber-400 rounded-2xl p-4 shadow-xl">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4">
+      <div className="glass-panel p-4 border-amber-400/40 bg-amber-500/10 backdrop-blur-xl">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <h3 className="font-semibold text-amber-800 mb-1">Red incorrecta</h3>
-            <p className="text-amber-700 text-sm mb-3">
-              Esta aplicación solo funciona en {SCROLL_SEPOLIA_NAME}.
-              Por favor cambia tu red para continuar.
+          <AlertCircle className="w-6 h-6 text-amber-300 flex-shrink-0 mt-0.5" />
+          <div className="flex-1 text-sm text-amber-50">
+            <h3 className="font-semibold text-white mb-1">Red incorrecta</h3>
+            <p className="mb-3">
+              Esta aplicación solo funciona en {SCROLL_SEPOLIA_NAME}. Cambia tu red para continuar.
             </p>
             <button
               onClick={handleSwitchNetwork}
               disabled={isPending}
-              className="bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+              className={`btn-secondary w-full justify-center ${isPending ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              {isPending ? 'Cambiando...' : `Cambiar a ${SCROLL_SEPOLIA_NAME}`}
+              {isPending ? 'Cambiando…' : `Cambiar a ${SCROLL_SEPOLIA_NAME}`}
             </button>
           </div>
-          <button
-            onClick={() => setDismissed(true)}
-            className="text-amber-500 hover:text-amber-700 transition-colors"
-          >
+          <button onClick={() => setDismissed(true)} className="btn-ghost px-2 py-1">
             <X className="w-5 h-5" />
           </button>
         </div>

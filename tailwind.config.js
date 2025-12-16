@@ -4,25 +4,27 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'system-ui', 'sans-serif'],
+        sans: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         primary: {
-          DEFAULT: '#00A3E0',
-          dark: '#0082B3',
-          light: '#99CBEB',
+          DEFAULT: '#64f8ce',
+          dark: '#4c6bff',
+          light: '#b7ffec',
         },
-        accent: '#00A3E0',
-        secondary: '#99CBEB',
+        accent: '#64f8ce',
+        secondary: '#7f8bff',
         light: {
-          DEFAULT: '#F5F5F5',
-          card: '#FFFFFF',
-          border: '#E0E0E0',
+          DEFAULT: '#030711',
+          card: '#0c1424',
+          border: 'rgba(255,255,255,0.08)',
         },
         dark: {
-          DEFAULT: '#000034',
-          muted: '#4a4a6a',
-          subtle: '#6b6b8a',
+          DEFAULT: '#f6f8ff',
+          muted: '#a9b4d9',
+          subtle: '#7f8cb8',
+          card: '#131b2f',
+          border: 'rgba(255,255,255,0.12)',
         },
       },
       borderRadius: {

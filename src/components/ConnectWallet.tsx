@@ -34,131 +34,126 @@ export default function ConnectWallet() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-light via-light-card to-light py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-8 text-center">
-          <div className="inline-flex bg-secondary/30 rounded-full p-4 mb-4">
-            <Shield className="w-12 h-12 text-accent" />
+    <div className="page-section">
+      <div className="section-shell max-w-3xl mx-auto space-y-6">
+        <div className="text-center space-y-4">
+          <div className="tag-pill mx-auto w-fit">
+            <Shield className="w-4 h-4" />
+            Paso 1 · Autorización
           </div>
-          <h1 className="text-3xl font-bold text-dark mb-2">Conecta y autoriza</h1>
+          <h1 className="text-3xl sm:text-4xl font-semibold text-white">Conecta y autoriza</h1>
           <p className="text-dark-muted">
-            Necesitamos tu permiso para generar una prueba sellada
+            Necesitamos tu permiso para leer señales on-chain y emitir una prueba sellada sin PII.
           </p>
         </div>
 
-        <div className="bg-light-card/80 backdrop-blur-sm rounded-3xl border border-light-border shadow-lg p-8 mb-6">
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-dark mb-4">1. Conecta tu wallet</h2>
+        <div className="glass-panel p-6 sm:p-8 space-y-8">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">
+                1. Conecta tu wallet
+              </h2>
+              <span className="chip chip-positive text-xs">Scroll · {SCROLL_SEPOLIA_NAME}</span>
+            </div>
             {!address ? (
-              <>
-                <p className="text-dark-muted text-sm mb-4">
-                  Usaremos tu wallet para analizar señales on-chain y generar tu prueba.
-                  Tu información no se comparte con terceros.
+              <div className="space-y-4">
+                <p className="text-dark-muted text-sm">
+                  Usaremos tu wallet para analizar señales on-chain. Nada se comparte sin tu consentimiento
+                  y puedes desconectarte cuando quieras.
                 </p>
                 {connectError && (
-                  <div className="bg-red-50 border border-red-300 rounded-xl p-4 mb-4">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                      <p className="text-red-700 text-sm">{connectError}</p>
+                  <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-left text-sm text-red-200">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-5 h-5" />
+                      {connectError}
                     </div>
                   </div>
                 )}
                 <button
                   onClick={handleConnect}
                   disabled={isConnecting}
-                  className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold transition-all shadow-md"
+                  className="btn-primary w-full"
                 >
-                  {isConnecting ? 'Conectando...' : 'Conectar Wallet'}
+                  {isConnecting ? 'Conectando...' : 'Conectar wallet'}
                 </button>
-                <p className="text-xs text-dark-subtle mt-3 text-center">
-                  Se abrirá Reown (WalletConnect) para seleccionar tu wallet en {SCROLL_SEPOLIA_NAME}
+                <p className="text-xs text-dark-muted text-center">
+                  Se abrirá Reown (WalletConnect) para elegir tu wallet en {SCROLL_SEPOLIA_NAME}.
                 </p>
-              </>
+              </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex items-center gap-3 bg-green-50 border border-green-300 rounded-xl p-4">
-                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-dark font-medium text-sm mb-1">Wallet conectada</p>
-                    <p className="text-dark-muted text-xs font-mono truncate">
-                      {address}
-                    </p>
+                <div className="rounded-2xl border border-green-400/30 bg-green-500/10 p-4 flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-green-300 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-white">Wallet conectada</p>
+                    <p className="text-xs text-dark-muted font-mono truncate">{address}</p>
                   </div>
                 </div>
                 <button
                   onClick={handleConnect}
-                  className="w-full sm:w-auto bg-green-100 hover:bg-green-200 text-green-700 border border-green-300 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                  className="btn-secondary w-full sm:w-auto"
                 >
-                  Administrar conexión / red
+                  Administrar conexión
                 </button>
                 {connectError && (
-                  <div className="bg-red-50 border border-red-300 rounded-xl p-3">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                      <p className="text-red-700 text-xs">{connectError}</p>
-                    </div>
+                  <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-3 text-xs text-red-200">
+                    {connectError}
                   </div>
                 )}
-                <p className="text-xs text-dark-subtle">
-                  Usa el modal de Reown para cambiar de wallet, desconectarte o elegir otra red.
+                <p className="text-xs text-dark-muted">
+                  Usa el modal de Reown para cambiar de wallet o red.
                 </p>
               </div>
             )}
           </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-dark mb-4">
-              2. Otorga consentimiento
-            </h2>
+          <div className="glow-divider" />
+
+          <div>
+            <h2 className="text-xl font-semibold text-white mb-4">2. Otorga consentimiento</h2>
             <p className="text-dark-muted text-sm mb-4">
-              Lee y acepta los siguientes términos en lenguaje claro:
+              Lee y acepta ambos términos para continuar con la generación de la prueba.
             </p>
 
             <div className="space-y-3">
-              <label className="flex items-start gap-3 p-4 bg-light rounded-xl cursor-pointer hover:bg-secondary/20 transition-colors border border-light-border">
+              <label className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 cursor-pointer transition hover:border-white/30">
                 <input
                   type="checkbox"
                   checked={consentData}
                   onChange={(e) => setConsentData(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded border-light-border text-accent focus:ring-accent"
+                  className="mt-1 h-5 w-5 rounded border-white/30 bg-transparent text-accent focus:ring-accent/50"
                 />
-                <div className="flex-1">
-                  <p className="text-dark text-sm font-medium mb-1">
-                    Analizar mi actividad on-chain
-                  </p>
-                  <p className="text-dark-muted text-xs">
-                    Permitimos que PrivyCredit analice transacciones y saldos de tu wallet
-                    para calcular factores de crédito (estabilidad, inflows, riesgo).
+                <div>
+                  <p className="text-white text-sm font-semibold mb-1">Analizar actividad on-chain</p>
+                  <p className="text-xs text-dark-muted">
+                    Permitimos que PrivyCredit calcule factores (estabilidad, inflows, riesgo) usando tu wallet.
                   </p>
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 p-4 bg-light rounded-xl cursor-pointer hover:bg-secondary/20 transition-colors border border-light-border">
+              <label className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 cursor-pointer transition hover:border-white/30">
                 <input
                   type="checkbox"
                   checked={consentPrivacy}
                   onChange={(e) => setConsentPrivacy(e.target.checked)}
-                  className="mt-1 w-5 h-5 rounded border-light-border text-accent focus:ring-accent"
+                  className="mt-1 h-5 w-5 rounded border-white/30 bg-transparent text-accent focus:ring-accent/50"
                 />
-                <div className="flex-1">
-                  <p className="text-dark text-sm font-medium mb-1">
-                    Generar prueba sellada sin PII
-                  </p>
-                  <p className="text-dark-muted text-xs">
-                    Entiendo que se generará una prueba con bandas (A/B/C) sin revelar
-                    montos exactos, contrapartes ni información personal identificable.
+                <div>
+                  <p className="text-white text-sm font-semibold mb-1">Generar prueba sellada sin PII</p>
+                  <p className="text-xs text-dark-muted">
+                    Se emitirá una prueba con bandas A/B/C sin exponer montos exactos ni contrapartes.
                   </p>
                 </div>
               </label>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 text-xs text-dark-subtle">
+            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-dark-muted">
               <ExternalLink className="w-3 h-3" />
-              <a href="#" className="hover:text-accent transition-colors">
+              <a href="#" className="hover:text-white transition-colors">
                 Términos de servicio
               </a>
               <span>·</span>
-              <a href="#" className="hover:text-accent transition-colors">
+              <a href="#" className="hover:text-white transition-colors">
                 Política de privacidad
               </a>
             </div>
@@ -166,40 +161,38 @@ export default function ConnectWallet() {
 
           <button
             onClick={() => setShowHelp(!showHelp)}
-            className="text-accent hover:text-primary-dark text-sm mb-4 transition-colors"
+            className="btn-ghost w-full justify-between text-sm"
           >
-            {showHelp ? '▼' : '▶'} ¿Qué es una prueba sellada?
+            ¿Qué es una prueba sellada?
+            <span>{showHelp ? '−' : '+'}</span>
           </button>
 
           {showHelp && (
-            <div className="bg-secondary/20 border border-accent/30 rounded-xl p-4 mb-6">
-              <p className="text-dark text-sm leading-relaxed">
-                Una <strong>prueba sellada</strong> es una verificación criptográfica que
-                demuestra que cumples ciertos criterios (como estabilidad financiera) sin
-                revelar los datos exactos que lo prueban. Es como mostrar que eres mayor
-                de edad sin enseñar tu fecha de nacimiento exacta.
-              </p>
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-dark-muted">
+              Una <strong className="text-white">prueba sellada</strong> demuestra que cumples criterios financieros
+              sin divulgar los datos que lo sustentan. Es como probar mayoría de edad sin mostrar tu fecha exacta de nacimiento.
             </div>
           )}
 
-          <button
-            onClick={handleContinue}
-            disabled={!canContinue}
-            className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold transition-all shadow-md"
-          >
-            Continuar
-          </button>
-
-          {!canContinue && address && (
-            <p className="text-center text-xs text-dark-subtle mt-3">
-              Acepta ambos consentimientos para continuar
-            </p>
-          )}
+          <div className="space-y-3">
+            <button
+              onClick={handleContinue}
+              disabled={!canContinue}
+              className={`btn-primary w-full ${!canContinue ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              Continuar
+            </button>
+            {!canContinue && address && (
+              <p className="text-center text-xs text-dark-muted">
+                Acepta ambos consentimientos para continuar.
+              </p>
+            )}
+          </div>
         </div>
 
         <button
           onClick={() => setCurrentScreen('landing')}
-          className="text-dark-muted hover:text-dark text-sm transition-colors mx-auto block"
+          className="btn-ghost mx-auto"
         >
           ← Volver
         </button>

@@ -1,18 +1,6 @@
 import { CheckCircle, Share2, Eye, ExternalLink } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { SCROLL_SEPOLIA_EXPLORER } from '../lib/contract';
-import { BandLevel } from '../types';
-
-const getBandColor = (band: BandLevel) => {
-  switch (band) {
-    case 'A':
-      return 'bg-green-100 text-green-700 border-green-300';
-    case 'B':
-      return 'bg-yellow-100 text-yellow-700 border-yellow-300';
-    case 'C':
-      return 'bg-red-100 text-red-700 border-red-300';
-  }
-};
 
 export default function ResultApto() {
   const { currentProof, setCurrentScreen } = useApp();
@@ -23,103 +11,80 @@ export default function ResultApto() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-light via-light-card to-light py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex bg-green-100 rounded-full p-6 mb-4">
-            <CheckCircle className="w-16 h-16 text-green-500" />
+    <div className="page-section">
+      <div className="section-shell max-w-3xl mx-auto space-y-8">
+        <div className="text-center space-y-4">
+          <div className="inline-flex rounded-full border border-white/20 bg-white/5 p-6">
+            <CheckCircle className="w-16 h-16 text-green-400" />
           </div>
-          <h1 className="text-4xl font-bold text-dark mb-3">¡Apto!</h1>
-          <p className="text-dark text-lg">
-            Tu perfil cumple los criterios de evaluación
-          </p>
+          <h1 className="text-4xl font-semibold text-white">¡Apto!</h1>
+          <p className="text-dark-muted text-lg">Tu perfil cumple los criterios de evaluación.</p>
         </div>
 
-        <div className="bg-light-card/80 backdrop-blur-sm rounded-3xl border border-light-border shadow-lg p-8 mb-6">
-          <h2 className="text-xl font-semibold text-dark mb-6">Factores evaluados</h2>
-
-          <div className="space-y-4 mb-8">
-            <div className="flex items-center justify-between p-4 bg-light rounded-xl border border-light-border">
-              <div>
-                <h3 className="font-medium text-dark mb-1">Estabilidad</h3>
-                <p className="text-xs text-dark-muted">Consistencia de saldos</p>
-              </div>
-              <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(currentProof.factors.estabilidad)}`}>
-                Banda {currentProof.factors.estabilidad}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-light rounded-xl border border-light-border">
-              <div>
-                <h3 className="font-medium text-dark mb-1">Inflows</h3>
-                <p className="text-xs text-dark-muted">Ingresos recurrentes</p>
-              </div>
-              <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(currentProof.factors.inflows)}`}>
-                Banda {currentProof.factors.inflows}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-light rounded-xl border border-light-border">
-              <div>
-                <h3 className="font-medium text-dark mb-1">Riesgo</h3>
-                <p className="text-xs text-dark-muted">Gestión de volatilidad</p>
-              </div>
-              <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(currentProof.factors.riesgo)}`}>
-                Banda {currentProof.factors.riesgo}
-              </span>
+        <div className="glass-panel p-8 space-y-8">
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-white">Factores evaluados</h2>
+            <div className="space-y-4">
+              {[
+                { label: 'Estabilidad', description: 'Consistencia de saldos', value: currentProof.factors.estabilidad },
+                { label: 'Inflows', description: 'Ingresos recurrentes', value: currentProof.factors.inflows },
+                { label: 'Riesgo', description: 'Gestión de volatilidad', value: currentProof.factors.riesgo },
+              ].map((factor) => (
+                <div
+                  key={factor.label}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-white/10 bg-white/5 p-4"
+                >
+                  <div>
+                    <h3 className="text-white font-medium">{factor.label}</h3>
+                    <p className="text-xs text-dark-muted">{factor.description}</p>
+                  </div>
+                  <span className="band-pill" data-tone={factor.value}>
+                    Banda {factor.value}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="bg-secondary/20 border border-accent/30 rounded-xl p-4 mb-6">
-            <p className="text-dark text-sm">
-              <strong>Privacidad protegida:</strong> Solo se comparten estas bandas.
-              Tus montos y contrapartes permanecen privados.
-            </p>
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-dark-muted">
+            <strong className="text-white">Privacidad protegida:</strong> Compartimos únicamente estas bandas y el
+            estado final. Montos y contrapartes permanecen privados.
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
-            <button
-              onClick={() => setCurrentScreen('share')}
-              className="flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark text-white py-3 rounded-xl font-semibold transition-all shadow-md"
-            >
+            <button onClick={() => setCurrentScreen('share')} className="btn-primary w-full">
               <Share2 className="w-5 h-5" />
-              Compartir con prestamista
+              Compartir
             </button>
-
-            <button
-              onClick={() => setCurrentScreen('share')}
-              className="flex items-center justify-center gap-2 bg-light-card hover:bg-light border border-light-border text-dark py-3 rounded-xl font-semibold transition-all"
-            >
+            <button onClick={() => setCurrentScreen('share')} className="btn-secondary w-full">
               <Eye className="w-5 h-5" />
               Ver detalles
             </button>
           </div>
         </div>
 
-        <div className="bg-light-card/80 backdrop-blur-sm rounded-2xl border border-light-border shadow-md p-6 mb-6">
-          <h3 className="text-sm font-semibold text-dark mb-3">Información de la prueba</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-dark-muted">ID de prueba:</span>
-              <span className="text-dark font-mono text-xs">
+        <div className="glass-panel p-6 space-y-4">
+          <h3 className="text-sm font-semibold text-dark-muted uppercase tracking-[0.3em]">Metadatos</h3>
+          <div className="space-y-2 text-sm text-dark-muted">
+            <div className="flex justify-between gap-4">
+              <span>ID de prueba:</span>
+              <span className="text-white font-mono text-xs">
                 {currentProof.blockchain_proof_id.substring(0, 10)}...
                 {currentProof.blockchain_proof_id.substring(currentProof.blockchain_proof_id.length - 8)}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-dark-muted">Válida hasta:</span>
-              <span className="text-dark">
-                {new Date(currentProof.expires_at).toLocaleDateString()}
-              </span>
+            <div className="flex justify-between gap-4">
+              <span>Válida hasta:</span>
+              <span className="text-white">{new Date(currentProof.expires_at).toLocaleDateString()}</span>
             </div>
             {currentProof.tx_hash && (
-              <div className="flex justify-between items-center">
-                <span className="text-dark-muted">Transacción:</span>
+              <div className="flex justify-between gap-4">
+                <span>Transacción:</span>
                 <a
                   href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${currentProof.tx_hash}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent hover:underline flex items-center gap-1 text-xs"
+                  className="inline-flex items-center gap-1 text-accent hover:text-white text-xs"
                 >
                   Ver en blockchain
                   <ExternalLink className="w-3 h-3" />
@@ -129,10 +94,7 @@ export default function ResultApto() {
           </div>
         </div>
 
-        <button
-          onClick={() => setCurrentScreen('landing')}
-          className="text-dark-muted hover:text-dark text-sm transition-colors mx-auto block"
-        >
+        <button onClick={() => setCurrentScreen('landing')} className="btn-ghost mx-auto">
           ← Volver al inicio
         </button>
       </div>
