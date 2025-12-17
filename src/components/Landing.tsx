@@ -208,13 +208,13 @@ export default function Landing() {
                   className="w-full h-full relative p-8 flex flex-col items-center justify-center bg-cover bg-center opacity-90 group-hover:scale-105 transition-transform duration-1000"
                   style={{ backgroundImage: `url(${heroMock})` }}
                 >
-                  <div className="absolute bottom-12 right-12 bg-[#1e293b]/90 backdrop-blur-xl border border-white/10 p-4 rounded-xl shadow-2xl animate-float hero-card-content max-w-xs">
+                  <div className="absolute bottom-12 right-12 bg-gradient-to-br from-[#0b1226]/95 via-[#152743]/95 to-emerald-900/80 backdrop-blur-xl border border-emerald-300/30 p-4 rounded-xl shadow-2xl animate-float hero-card-content max-w-xs">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                        <CheckCircle className="w-5 h-5 text-emerald-400" />
+                      <div className="w-10 h-10 rounded-full bg-emerald-400/35 ring-1 ring-emerald-200/40 flex items-center justify-center">
+                        <CheckCircle className="w-5 h-5 text-emerald-200" />
                       </div>
                       <div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs text-cyan-200/80">
                           {heroCards[activeCard].label}
                         </div>
                         <div className="text-sm font-bold text-white">
@@ -222,37 +222,17 @@ export default function Landing() {
                         </div>
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-300/80 mb-4">
+                    <p className="text-[11px] text-slate-100/85 mb-4">
                       {heroCards[activeCard].description}
                     </p>
-                    <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-emerald-500/20 rounded-full overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-emerald-500 relative"
+                        className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-emerald-300 to-cyan-300 relative"
                         style={{ width: heroCards[activeCard].meter }}
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-40 animate-meter-shine" />
                       </div>
                     </div>
-                  </div>
-                  <div className="absolute bottom-6 left-6 z-20 flex gap-2">
-                    <button
-                      onClick={() =>
-                        setActiveCard((prev) =>
-                          prev === 0 ? heroCards.length - 1 : prev - 1,
-                        )
-                      }
-                      className="w-9 h-9 rounded-full bg-black/40 border border-white/10 flex items-center justify-center text-slate-200 hover:bg-black/70 hover:border-white/40 transition-colors"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() =>
-                        setActiveCard((prev) => (prev + 1) % heroCards.length)
-                      }
-                      className="w-9 h-9 rounded-full bg-black/40 border border-white/10 flex items-center justify-center text-slate-200 hover:bg-black/70 hover:border-white/40 transition-colors"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               </Card>

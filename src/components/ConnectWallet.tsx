@@ -43,9 +43,6 @@ export default function ConnectWallet() {
             Paso 1 · Autorización
           </Badge>
           <h1 className="text-3xl sm:text-4xl font-semibold text-white">Conecta y autoriza</h1>
-          <p className="text-blue-100/80 max-w-2xl mx-auto">
-            Necesitamos tu permiso para analizar señales on-chain y emitir una prueba sellada sin exponer PII.
-          </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -60,7 +57,7 @@ export default function ConnectWallet() {
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-white">Conecta tu billetera</h2>
                 <p className="text-blue-100/70 text-sm">
-                  Operamos en Scroll · {SCROLL_SEPOLIA_NAME}. Reown (WalletConnect) abrirá un modal para seleccionar tu wallet.
+                  Presiona &quot;Administrar conexion&quot;.
                 </p>
               </div>
             </div>
@@ -162,6 +159,19 @@ export default function ConnectWallet() {
           </Card>
         </div>
 
+        <div className="space-y-3">
+          <Button
+            onClick={handleContinue}
+            disabled={!canContinue}
+            className={`w-full justify-center py-4 text-base ${!canContinue ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            Continuar
+          </Button>
+          {!canContinue && address && (
+            <p className="text-center text-xs text-blue-200/60">Acepta ambos consentimientos para continuar.</p>
+          )}
+        </div>
+
         <Card className="space-y-4 !bg-[#050b18]/80">
           <button
             onClick={() => setShowHelp((prev) => !prev)}
@@ -177,19 +187,6 @@ export default function ConnectWallet() {
             </p>
           )}
         </Card>
-
-        <div className="space-y-3">
-          <Button
-            onClick={handleContinue}
-            disabled={!canContinue}
-            className={`w-full justify-center py-4 text-base ${!canContinue ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            Continuar
-          </Button>
-          {!canContinue && address && (
-            <p className="text-center text-xs text-blue-200/60">Acepta ambos consentimientos para continuar.</p>
-          )}
-        </div>
 
         <Button variant="ghost" onClick={() => setCurrentScreen('landing')} className="mx-auto text-blue-200/80">
           ← Volver
