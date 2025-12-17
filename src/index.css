@@ -240,15 +240,25 @@
   }
 }
 
+.hero-bg-clip {
+  position: relative;
+  isolation: isolate;
+  pointer-events: none;
+}
+
 .hero-bg-clip::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -12% -18%;
   background: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.35), transparent 55%),
     radial-gradient(circle at 80% 70%, rgba(129, 140, 248, 0.4), transparent 55%);
   mix-blend-mode: screen;
   clip-path: inset(0 100% 0 0);
   animation: clipColumns 1.4s ease-out both;
+  filter: blur(120px);
+  opacity: 0.85;
+  mask-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 1) 35%, rgba(255, 255, 255, 0) 80%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 1) 35%, rgba(255, 255, 255, 0) 80%);
 }
 
 @keyframes clipColumns {
