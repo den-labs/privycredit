@@ -30,127 +30,102 @@ export default function ShareProof() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-card to-dark py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex bg-accent/20 rounded-full p-6 mb-4">
+    <div className="page-section">
+      <div className="section-shell max-w-3xl mx-auto space-y-8">
+        <div className="text-center space-y-4">
+          <div className="inline-flex rounded-full border border-white/15 bg-white/5 p-6">
             <Share2 className="w-16 h-16 text-accent" />
           </div>
-          <h1 className="text-3xl font-bold text-light mb-3">Compartir prueba</h1>
-          <p className="text-light">
-            Genera un enlace seguro para compartir con prestamistas
-          </p>
+          <h1 className="text-3xl font-semibold text-white">Compartir prueba</h1>
+          <p className="text-dark-muted">Genera un enlace seguro para que prestamistas verifiquen tu resultado.</p>
         </div>
 
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8 mb-6">
-          <h2 className="text-xl font-semibold text-light mb-6">Enlace de verificación</h2>
-
-          <div className="bg-dark-card/50 rounded-xl p-4 mb-4">
-            <div className="flex items-center gap-3 mb-3">
-              <Clock className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-              <p className="text-sm text-light">
-                Este enlace expira en <strong className="text-light">{daysUntilExpiry} días</strong>
-              </p>
-            </div>
-            <div className="bg-dark/50 rounded-lg p-3 mb-3">
-              <a
-                href={shareLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-accent font-mono break-all hover:underline"
-              >
-                {shareLink}
-              </a>
-            </div>
-            <button
-              onClick={handleCopy}
-              className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark text-dark py-3 rounded-lg font-semibold transition-all"
-            >
-              {copied ? (
-                <>
-                  <CheckCircle className="w-5 h-5" />
-                  Copiado
-                </>
-              ) : (
-                <>
-                  <Copy className="w-5 h-5" />
-                  Copiar enlace
-                </>
-              )}
-            </button>
-          </div>
-
-          <div className="bg-dark-card/30 border border-accent/50 rounded-xl p-4 mb-6">
-            <p className="text-light text-sm leading-relaxed">
-              <strong>Qué se comparte:</strong> Este enlace solo muestra tu resultado
-              (Apto/Casi) y las bandas por factor. No se revelan montos, contrapartes
-              ni información personal.
-            </p>
-          </div>
-
-          <div className="border-t border-dark-border pt-6">
-            <h3 className="font-semibold text-light mb-4">Compartir con aliados</h3>
-            <div className="space-y-3">
-              <button className="w-full p-4 bg-dark-card/30 hover:bg-dark-card/50 rounded-xl text-left transition-all flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-light mb-1">Cooperativa A</p>
-                  <p className="text-xs text-gray-400">Envío directo a su plataforma</p>
-                </div>
-                <ExternalLink className="w-5 h-5 text-gray-400" />
-              </button>
-
-              <button className="w-full p-4 bg-dark-card/30 hover:bg-dark-card/50 rounded-xl text-left transition-all flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-light mb-1">Fintech B</p>
-                  <p className="text-xs text-gray-400">Integración automática</p>
-                </div>
-                <ExternalLink className="w-5 h-5 text-gray-400" />
-              </button>
-
-              <button className="w-full p-4 bg-dark-card/30 hover:bg-dark-card/50 rounded-xl text-left transition-all flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-light mb-1">Banco C</p>
-                  <p className="text-xs text-gray-400">Portal de solicitudes</p>
-                </div>
-                <ExternalLink className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-2xl border border-dark-border p-6 mb-6">
-          <h3 className="text-sm font-semibold text-light mb-3">Detalles de la prueba</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Estado:</span>
-              <span className="text-light font-semibold capitalize">{currentProof.status}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Creada:</span>
-              <span className="text-light">
-                {new Date(currentProof.created_at).toLocaleDateString()}
-              </span>
-            </div>
-            {currentProof.tx_hash && (
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Blockchain:</span>
+        <div className="glass-panel p-8 space-y-8">
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-white">Enlace de verificación</h2>
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-4 space-y-3">
+              <div className="flex items-center gap-3 text-sm text-dark-muted">
+                <Clock className="w-5 h-5 text-amber-300" />
+                Este enlace expira en <strong className="text-white font-semibold">{daysUntilExpiry} días</strong>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/40 p-3">
                 <a
-                  href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${currentProof.tx_hash}`}
+                  href={shareLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent hover:underline flex items-center gap-1 text-xs"
+                  className="text-sm text-accent font-mono break-all hover:text-white"
                 >
-                  Ver transacción
-                  <ExternalLink className="w-3 h-3" />
+                  {shareLink}
                 </a>
               </div>
-            )}
+              <button onClick={handleCopy} className="btn-primary w-full">
+                {copied ? (
+                  <>
+                    <CheckCircle className="w-5 h-5" />
+                    Copiado
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-5 h-5" />
+                    Copiar enlace
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-dark-muted">
+              <strong className="text-white">Qué se comparte:</strong> Estado (Apto/Casi) y bandas por factor. Ningún
+              monto, contraparte ni dato personal sale en claro.
+            </div>
           </div>
+
+          <div className="space-y-4">
+            <h3 className="font-semibold text-white">Compartir con aliados</h3>
+            <div className="grid gap-3">
+              {['Cooperativa A', 'Fintech B', 'Banco C'].map((ally) => (
+                <button
+                  key={ally}
+                  className="flex w-full items-center justify-between rounded-3xl border border-white/10 bg-white/5 px-5 py-4 text-left text-white hover:border-white/30 transition"
+                >
+                  <div>
+                    <p className="font-medium">{ally}</p>
+                    <p className="text-xs text-dark-muted">Integración directa</p>
+                  </div>
+                  <ExternalLink className="w-5 h-5 text-dark-muted" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="glass-panel p-6 space-y-2 text-sm text-dark-muted">
+          <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-dark-subtle">Detalles</h3>
+          <div className="flex justify-between">
+            <span>Estado:</span>
+            <span className="text-white font-semibold capitalize">{currentProof.status}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Creada:</span>
+            <span className="text-white">{new Date(currentProof.created_at).toLocaleDateString()}</span>
+          </div>
+          {currentProof.tx_hash && (
+            <div className="flex justify-between items-center">
+              <span>Blockchain:</span>
+              <a
+                href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${currentProof.tx_hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-accent hover:text-white text-xs"
+              >
+                Ver transacción
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          )}
         </div>
 
         <button
           onClick={() => setCurrentScreen(currentProof.status === 'apto' ? 'result-apto' : 'result-casi')}
-          className="text-gray-400 hover:text-light text-sm transition-colors mx-auto block"
+          className="btn-ghost mx-auto"
         >
           ← Volver a resultados
         </button>

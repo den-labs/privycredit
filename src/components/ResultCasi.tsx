@@ -1,17 +1,6 @@
-import { AlertCircle, TrendingUp, Bell, Eye } from 'lucide-react';
+import { AlertCircle, TrendingUp, Bell, Eye, Zap } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { BandLevel } from '../types';
-
-const getBandColor = (band: BandLevel) => {
-  switch (band) {
-    case 'A':
-      return 'bg-accent/20 text-green-400 border-green-500/50';
-    case 'B':
-      return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
-    case 'C':
-      return 'bg-red-500/20 text-red-400 border-red-500/50';
-  }
-};
+import { Badge, Button, Card } from './ui';
 
 const improvements = [
   {
@@ -39,126 +28,128 @@ export default function ResultCasi() {
     return null;
   }
 
+  const factors = [
+    { label: 'Estabilidad', description: 'Consistencia de saldos', value: currentProof.factors.estabilidad },
+    { label: 'Inflows', description: 'Ingresos recurrentes', value: currentProof.factors.inflows },
+    { label: 'Riesgo', description: 'Gestión de volatilidad', value: currentProof.factors.riesgo },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-card to-dark py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex bg-yellow-500/20 rounded-full p-6 mb-4">
-            <AlertCircle className="w-16 h-16 text-yellow-400" />
-          </div>
-          <h1 className="text-4xl font-bold text-light mb-3">Casi allí</h1>
-          <p className="text-light text-lg">
-            Estás cerca de cumplir todos los criterios
-          </p>
+    <div className="px-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-4">
+          <Badge type="warning" className="mx-auto">
+            Ajustes recomendados
+          </Badge>
+          <h1 className="text-4xl font-semibold text-white">Aún no eres apto</h1>
+          <p className="text-amber-100/80 text-lg">Pequeños ajustes pueden empujarte al estado “Apto”.</p>
         </div>
 
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8 mb-6">
-          <h2 className="text-xl font-semibold text-light mb-6">Tu evaluación actual</h2>
-
-          <div className="space-y-4 mb-8">
-            <div className="flex items-center justify-between p-4 bg-dark-card/30 rounded-xl">
-              <div>
-                <h3 className="font-medium text-light mb-1">Estabilidad</h3>
-                <p className="text-xs text-gray-400">Consistencia de saldos</p>
-              </div>
-              <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(currentProof.factors.estabilidad)}`}>
-                Banda {currentProof.factors.estabilidad}
-              </span>
+        <Card className="!border-amber-500/20 !bg-[#451a03]/80 shadow-[0_0_50px_rgba(245,158,11,0.15)]">
+          <div className="absolute top-0 left-0 w-full h-1 bg-amber-500 shadow-[0_0_20px_#F59E0B]" />
+          <div className="pt-10 pb-6 px-4 space-y-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center border border-amber-500/20 mb-6 relative">
+              <AlertCircle className="w-8 h-8 text-amber-500" />
             </div>
-
-            <div className="flex items-center justify-between p-4 bg-dark-card/30 rounded-xl">
-              <div>
-                <h3 className="font-medium text-light mb-1">Inflows</h3>
-                <p className="text-xs text-gray-400">Ingresos recurrentes</p>
-              </div>
-              <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(currentProof.factors.inflows)}`}>
-                Banda {currentProof.factors.inflows}
-              </span>
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold text-white">Tu score está en revisión</h2>
+              <p className="text-amber-100/70 text-sm px-6">
+                Puedes mejorar tus bandas enfocándote en estabilidad y flujo de entrada.
+              </p>
             </div>
-
-            <div className="flex items-center justify-between p-4 bg-dark-card/30 rounded-xl">
-              <div>
-                <h3 className="font-medium text-light mb-1">Riesgo</h3>
-                <p className="text-xs text-gray-400">Gestión de volatilidad</p>
+            <div className="bg-black/20 rounded-xl p-6 border border-amber-500/10 text-left mx-4 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Zap className="w-24 h-24 text-amber-500 rotate-12" />
               </div>
-              <span className={`px-4 py-2 rounded-full text-sm font-bold border ${getBandColor(currentProof.factors.riesgo)}`}>
-                Banda {currentProof.factors.riesgo}
-              </span>
+              <h4 className="text-white font-medium mb-4 flex items-center gap-2 relative z-10">
+                <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
+                Cómo mejorar tu score
+              </h4>
+              <ul className="space-y-3 text-sm text-amber-100/70 relative z-10">
+                <li className="flex gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                  Incrementa el volumen de transacciones en Scroll.
+                </li>
+                <li className="flex gap-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                  Mantén un saldo promedio superior a 0.05 ETH durante 30 días.
+                </li>
+              </ul>
             </div>
           </div>
+        </Card>
 
-          <div className="bg-yellow-900/30 border border-yellow-500/50 rounded-xl p-4 mb-6">
-            <p className="text-yellow-200 text-sm">
-              Mejorando algunos factores podrías alcanzar el estado "Apto" pronto.
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8 mb-6">
-          <h2 className="text-xl font-semibold text-light mb-4">Mejoras sugeridas</h2>
-          <p className="text-gray-400 text-sm mb-6">
-            Estos cambios te acercarán a una evaluación "Apto":
-          </p>
-
-          <div className="space-y-3 mb-6">
-            {improvements.map((item, index) => (
-              <div key={index} className="p-4 bg-dark-card/30 rounded-xl">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-medium text-light">{item.factor}</h3>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    item.impact === 'Alto'
-                      ? 'bg-accent/20 text-green-400'
-                      : 'bg-yellow-500/20 text-yellow-400'
-                  }`}>
-                    Impacto {item.impact}
-                  </span>
+        <Card className="space-y-4">
+          <h2 className="text-xl font-semibold text-white">Tu evaluación actual</h2>
+          <div className="space-y-3">
+            {factors.map((factor) => (
+              <div
+                key={factor.label}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-4"
+              >
+                <div>
+                  <h3 className="text-white font-semibold">{factor.label}</h3>
+                  <p className="text-xs text-blue-100/70">{factor.description}</p>
                 </div>
-                <p className="text-sm text-gray-400">{item.action}</p>
+                <span className="band-pill" data-tone={factor.value}>
+                  Banda {factor.value}
+                </span>
               </div>
             ))}
           </div>
+          <div className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-4 text-sm text-amber-100">
+            Mejorando algunos factores podrás alcanzar el estado “Apto”.
+          </div>
+        </Card>
 
+        <Card className="space-y-5">
+          <div>
+            <h2 className="text-xl font-semibold text-white">Mejoras sugeridas</h2>
+            <p className="text-blue-100/70 text-sm">Estos ajustes tienen impacto directo en tu banda.</p>
+          </div>
+          <div className="space-y-3">
+            {improvements.map((item) => (
+              <div key={item.factor} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-white font-medium">{item.factor}</h3>
+                  <span className={`chip ${item.impact === 'Alto' ? 'chip-positive' : 'chip-alert'}`}>
+                    Impacto {item.impact}
+                  </span>
+                </div>
+                <p className="text-sm text-blue-100/70">{item.action}</p>
+              </div>
+            ))}
+          </div>
           <div className="grid sm:grid-cols-2 gap-4">
-            <button
-              onClick={() => setCurrentScreen('simulator')}
-              className="flex items-center justify-center gap-2 bg-accent hover:bg-primary-dark text-dark py-3 rounded-xl font-semibold transition-all"
-            >
+            <Button onClick={() => setCurrentScreen('simulator')} className="w-full justify-center">
               <TrendingUp className="w-5 h-5" />
               Abrir simulador
-            </button>
-
-            <button
-              onClick={() => setCurrentScreen('reminders')}
-              className="flex items-center justify-center gap-2 bg-dark-card hover:bg-gray-600 text-light py-3 rounded-xl font-semibold transition-all"
-            >
+            </Button>
+            <Button variant="secondary" onClick={() => setCurrentScreen('reminders')} className="w-full justify-center">
               <Bell className="w-5 h-5" />
-              Recordarme en 30 días
-            </button>
+              Recordarme
+            </Button>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-2xl border border-dark-border p-6 mb-6">
-          <button
-            onClick={() => setCurrentScreen('checklist')}
-            className="w-full flex items-center justify-between text-light hover:text-accent transition-colors"
-          >
-            <span className="font-medium">Ver lista de mejoras completa</span>
-            <Eye className="w-5 h-5" />
-          </button>
-        </div>
+        <Card className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-white">Lista completa de acciones sugeridas</p>
+            <p className="text-xs text-blue-100/70">Prioriza cambios en tu ritmo on-chain.</p>
+          </div>
+          <Button variant="ghost" onClick={() => setCurrentScreen('checklist')} className="text-blue-200/80">
+            Ver checklist
+            <Eye className="w-4 h-4" />
+          </Button>
+        </Card>
 
-        <div className="bg-dark-card/30 border border-accent/50 rounded-2xl p-4 mb-6 text-center">
-          <p className="text-light text-sm">
-            <strong>Tu privacidad está protegida.</strong> Estos datos permanecen privados y solo tú los ves.
-          </p>
-        </div>
+        <Card className="text-center text-sm text-blue-100/70">
+          <strong className="text-white">Tu privacidad permanece intacta.</strong> Solo tú ves estos datos.
+        </Card>
 
-        <button
-          onClick={() => setCurrentScreen('landing')}
-          className="text-gray-400 hover:text-light text-sm transition-colors mx-auto block"
-        >
+        <Button variant="ghost" onClick={() => setCurrentScreen('landing')} className="mx-auto text-blue-200/80">
           ← Volver al inicio
-        </button>
+        </Button>
       </div>
     </div>
   );

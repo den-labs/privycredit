@@ -1,18 +1,26 @@
+import { Suspense, lazy } from 'react';
 import { useApp } from './context/AppContext';
 import Landing from './components/Landing';
-import ConnectWallet from './components/ConnectWallet';
-import GenerateProof from './components/GenerateProof';
-import ResultApto from './components/ResultApto';
-import ResultCasi from './components/ResultCasi';
-import ShareProof from './components/ShareProof';
-import ImprovementChecklist from './components/ImprovementChecklist';
-import Simulator from './components/Simulator';
-import Reminders from './components/Reminders';
-import VerifierGate from './components/VerifierGate';
 import NetworkAlert from './components/NetworkAlert';
 import WalletControls from './components/WalletControls';
 import Footer from './components/Footer';
-import VerifyPublic from './components/VerifyPublic';
+
+const ConnectWallet = lazy(() => import('./components/ConnectWallet'));
+const GenerateProof = lazy(() => import('./components/GenerateProof'));
+const ResultApto = lazy(() => import('./components/ResultApto'));
+const ResultCasi = lazy(() => import('./components/ResultCasi'));
+const ShareProof = lazy(() => import('./components/ShareProof'));
+const ImprovementChecklist = lazy(() => import('./components/ImprovementChecklist'));
+const Simulator = lazy(() => import('./components/Simulator'));
+const Reminders = lazy(() => import('./components/Reminders'));
+const VerifierGate = lazy(() => import('./components/VerifierGate'));
+const VerifyPublic = lazy(() => import('./components/VerifyPublic'));
+
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center py-20 text-sm text-blue-100/70">
+    Cargando...
+  </div>
+);
 
 function App() {
   const { currentScreen } = useApp();
@@ -22,7 +30,11 @@ function App() {
       : null;
 
   if (verifyPathId) {
-    return <VerifyPublic proofId={verifyPathId} />;
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        <VerifyPublic proofId={verifyPathId} />
+      </Suspense>
+    );
   }
 
   const renderScreen = () => {
@@ -51,12 +63,12 @@ function App() {
   };
 
   return (
-    <div className="antialiased flex flex-col min-h-screen">
+    <div className="app-shell antialiased min-h-screen">
       <NetworkAlert />
       <WalletControls />
-      <div className="flex-1">
-        {renderScreen()}
-      </div>
+      <main className="flex-1 pt-28 pb-16">
+        <Suspense fallback={<LoadingFallback />}>{renderScreen()}</Suspense>
+      </main>
       <Footer />
     </div>
   );

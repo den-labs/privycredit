@@ -34,37 +34,26 @@ type ProofView = {
   txHash?: string;
 };
 
-const getBandColor = (band: BandLevel) => {
-  switch (band) {
-    case 'A':
-      return 'bg-accent/20 text-green-400 border-green-500/50';
-    case 'B':
-      return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
-    case 'C':
-      return 'bg-red-500/20 text-red-400 border-red-500/50';
-  }
-};
-
 const STATUS_META = {
   apto: {
     label: 'Apto',
-    badge: 'bg-green-500/20 text-green-300 border border-green-500/50',
+    badge: 'chip chip-positive',
     description: 'Cumple los criterios para recibir una oferta preferente.',
   },
   casi: {
     label: 'Casi',
-    badge: 'bg-yellow-500/20 text-yellow-200 border border-yellow-500/50',
+    badge: 'chip chip-alert',
     description: 'Necesita un repaso manual o un pequeño ajuste.',
   },
   'no-apto': {
     label: 'No apto',
-    badge: 'bg-red-500/20 text-red-200 border border-red-500/50',
+    badge: 'chip chip-negative',
     description: 'La prueba está vencida, revocada o fuera de los parámetros.',
   },
 };
 
-const CONTACT_MESSAGE = (proofId: string) =>
-  `Hola, revisé tu prueba en PrivyCredit (${proofId.slice(0, 10)}...). ¿Podemos agendar una llamada para continuar con tu solicitud?`;
+const CONTACT_MESSAGE = (id: string) =>
+  `Hola, revisé tu prueba en PrivyCredit (${id.slice(0, 10)}...). ¿Podemos agendar una llamada para continuar con tu solicitud?`;
 
 export default function VerifyPublic({ proofId }: VerifyPublicProps) {
   const [loading, setLoading] = useState(true);
@@ -190,89 +179,77 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-card to-dark flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-4xl">
-        <div className="text-center mb-8">
-          <div className="inline-flex bg-accent/20 rounded-full p-6 mb-4">
+    <div className="page-section">
+      <div className="section-shell w-full max-w-4xl mx-auto space-y-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex rounded-full border border-white/15 bg-white/5 p-6">
             <ShieldCheck className="w-16 h-16 text-accent" />
           </div>
-          <h1 className="text-3xl font-bold text-light mb-3">Verificación de PrivyCredit</h1>
-          <p className="text-gray-300">
-            Comprueba el estado compartido mediante un enlace seguro sin crear cuenta.
-          </p>
+          <h1 className="text-3xl font-semibold text-white">Verificación de PrivyCredit</h1>
+          <p className="text-dark-muted">Comprueba el estado compartido mediante un enlace seguro.</p>
         </div>
 
         {loading && (
-          <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-10 flex flex-col items-center gap-4">
+          <div className="glass-panel p-10 flex flex-col items-center gap-4">
             <Loader2 className="w-10 h-10 text-accent animate-spin" />
-            <p className="text-light text-lg">Consultando la prueba en Scroll...</p>
+            <p className="text-lg text-white">Consultando la prueba en Scroll…</p>
           </div>
         )}
 
         {!loading && error && (
-          <div className="bg-red-900/50 border border-red-500 rounded-3xl p-8 text-center">
-            <AlertCircle className="w-12 h-12 text-red-300 mx-auto mb-4" />
-            <p className="text-red-100 mb-4 text-sm leading-relaxed">{error}</p>
-            <a
-              href="/"
-              className="inline-flex items-center gap-2 text-light font-semibold hover:underline"
-            >
-              Volver a PrivyCredit
+          <div className="glass-panel border-red-500/40 bg-red-500/10 p-8 text-center space-y-3">
+            <AlertCircle className="w-12 h-12 text-red-300 mx-auto" />
+            <p className="text-sm text-red-100 leading-relaxed">{error}</p>
+            <a href="/" className="btn-secondary inline-flex items-center justify-center gap-2 mx-auto">
+              ← Volver a PrivyCredit
             </a>
           </div>
         )}
 
         {!loading && proof && (
           <div className="space-y-6">
-            <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="glass-panel p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <p className="text-sm uppercase tracking-wide text-gray-400 mb-2">
-                    Estado de la solicitud
-                  </p>
-                  <div className={`inline-flex items-center gap-3 px-4 py-2 rounded-full ${STATUS_META[status].badge}`}>
-                    <span className="font-semibold text-base">{STATUS_META[status].label}</span>
+                  <p className="text-xs uppercase tracking-[0.4em] text-dark-muted mb-2">Estado</p>
+                  <div className={`${STATUS_META[status].badge}`}>
+                    <span>{STATUS_META[status].label}</span>
                   </div>
-                  <p className="text-gray-300 text-sm mt-2">{STATUS_META[status].description}</p>
+                  <p className="text-dark-muted text-sm mt-2">{STATUS_META[status].description}</p>
                 </div>
-
-                <div className="text-sm text-gray-400">
-                  <p className="mb-2 font-semibold text-light flex items-center gap-2">
+                <div className="text-sm text-dark-muted">
+                  <p className="mb-2 font-semibold text-white flex items-center gap-2">
                     <Wallet className="w-4 h-4" />
                     Wallet evaluada
                   </p>
-                  <p className="font-mono text-light">
+                  <p className="font-mono text-white">
                     {proof.wallet.substring(0, 6)}...{proof.wallet.substring(proof.wallet.length - 4)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">Anclada con hash único.</p>
+                  <p className="text-xs text-dark-subtle mt-1">Anclada con hash único.</p>
                 </div>
               </div>
 
-              <div className="bg-dark-card/30 border border-dark-border rounded-2xl p-6 mb-6">
-                <div className="flex flex-wrap gap-4 text-sm text-gray-300">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 space-y-4">
+                <div className="flex flex-wrap gap-4 text-sm text-dark-muted">
                   <div className="flex items-center gap-2">
                     <CalendarDays className="w-4 h-4 text-accent" />
                     <div>
-                      <p className="text-xs text-gray-500 uppercase">Emitida</p>
-                      <p className="text-light font-semibold">
-                        {proof.createdAt.toLocaleDateString()}
-                      </p>
+                      <p className="text-xs text-dark-subtle uppercase">Emitida</p>
+                      <p className="text-white font-semibold">{proof.createdAt.toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <CalendarDays className="w-4 h-4 text-accent" />
                     <div>
-                      <p className="text-xs text-gray-500 uppercase">Expira</p>
-                      <p className="text-light font-semibold">
-                        {proof.expiresAt.toLocaleDateString()}
-                      </p>
+                      <p className="text-xs text-dark-subtle uppercase">Expira</p>
+                      <p className="text-white font-semibold">{proof.expiresAt.toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-accent" />
                     <div>
-                      <p className="text-xs text-gray-500 uppercase">Prueba</p>
-                      <p className="text-light font-mono text-xs">
+                      <p className="text-xs text-dark-subtle uppercase">ID Prueba</p>
+                      <p className="text-white font-mono text-xs">
                         {normalizedProofId?.substring(0, 10)}...
                         {normalizedProofId?.substring(normalizedProofId.length - 6)}
                       </p>
@@ -283,95 +260,82 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
 
               <div className="flex flex-wrap gap-4">
                 {(['estabilidad', 'inflows', 'riesgo'] as const).map((key) => (
-                  <div key={key} className="flex-1 min-w-[200px] bg-dark-card/30 rounded-2xl border border-dark-border p-5">
-                    <p className="text-sm text-gray-400 capitalize mb-1">{key}</p>
-                    <p className="text-xs text-gray-500 mb-3">
+                  <div key={key} className="flex-1 min-w-[200px] rounded-3xl border border-white/10 bg-white/5 p-5">
+                    <p className="text-sm text-dark-muted capitalize mb-1">{key}</p>
+                    <p className="text-xs text-dark-subtle mb-3">
                       {key === 'estabilidad' && 'Consistencia de saldos'}
                       {key === 'inflows' && 'Ingresos recurrentes'}
                       {key === 'riesgo' && 'Gestión de riesgo'}
                     </p>
-                    <span className={`inline-flex px-4 py-1 rounded-full text-sm font-bold border ${getBandColor(proof.factors[key])}`}>
+                    <span className="band-pill" data-tone={proof.factors[key]}>
                       Banda {proof.factors[key]}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 {proof.txHash ? (
                   <a
                     href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${proof.txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-green-500/10 text-green-200 border border-green-500/40 hover:bg-green-500/20 transition-all"
+                    className="btn-secondary inline-flex items-center gap-2"
                   >
                     <ShieldCheck className="w-4 h-4" />
                     Verificado en Scroll
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 ) : (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-gray-700/40 text-gray-200 border border-gray-600/40">
-                    <ShieldCheck className="w-4 h-4" />
-                    Verificado en Scroll
-                  </div>
+                  <div className="chip chip-positive text-xs">Verificado en Scroll</div>
                 )}
-
-                <div className="text-xs text-gray-400 flex-1 text-left">
+                <div className="text-xs text-dark-muted flex-1">
                   <p className="flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-yellow-300" />
+                    <AlertCircle className="w-4 h-4 text-yellow-400" />
                     Solo se comparten bandas y estado. Montos y contrapartes permanecen privados.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8">
+            <div className="glass-panel p-8 space-y-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div>
-                  <h2 className="text-xl font-semibold text-light mb-2">Contactar solicitante</h2>
-                  <p className="text-sm text-gray-300">
+                  <h2 className="text-xl font-semibold text-white">Contactar solicitante</h2>
+                  <p className="text-sm text-dark-muted">
                     Continúa la solicitud directamente por el canal que prefieras.
                   </p>
                 </div>
-                <button
-                  onClick={() => setContactOpen((prev) => !prev)}
-                  className="px-6 py-3 rounded-2xl bg-accent text-dark font-semibold hover:bg-primary-dark transition-all"
-                >
+                <button onClick={() => setContactOpen((prev) => !prev)} className="btn-primary w-full md:w-auto">
                   {contactOpen ? 'Ocultar opciones' : 'Contactar solicitante'}
                 </button>
               </div>
 
               {contactOpen && (
-                <div className="grid sm:grid-cols-2 gap-4 mt-6">
-                  <button
-                    onClick={handleOpenMail}
-                    className="flex items-center justify-center gap-3 bg-dark-card/30 border border-dark-border rounded-2xl px-4 py-4 text-light hover:bg-dark-card/50 transition-all text-sm font-semibold"
-                  >
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <button onClick={handleOpenMail} className="btn-secondary w-full justify-center">
                     <Mail className="w-5 h-5 text-accent" />
                     Email
                   </button>
-                  <button
-                    onClick={handleOpenWhatsapp}
-                    className="flex items-center justify-center gap-3 bg-dark-card/30 border border-dark-border rounded-2xl px-4 py-4 text-light hover:bg-dark-card/50 transition-all text-sm font-semibold"
-                  >
-                    <MessageCircle className="w-5 h-5 text-green-300" />
+                  <button onClick={handleOpenWhatsapp} className="btn-secondary w-full justify-center">
+                    <MessageCircle className="w-5 h-5 text-green-400" />
                     WhatsApp
                   </button>
                 </div>
               )}
             </div>
 
-            <div className="bg-dark-card/30 border border-dark-border rounded-3xl p-6 text-sm text-gray-300">
-              <p className="font-semibold text-light mb-2">Qué NO estamos compartiendo</p>
-              <ul className="list-disc list-inside space-y-1 text-gray-300">
+            <div className="glass-panel p-6 text-sm text-dark-muted">
+              <p className="font-semibold text-white mb-2">Qué NO estamos compartiendo</p>
+              <ul className="list-disc list-inside space-y-1">
                 <li>Balances, montos o ingresos exactos del solicitante.</li>
                 <li>Contrapartes, historial de pagos o interacciones DeFi.</li>
                 <li>Cualquier dato personal identificable fuera de la wallet evaluada.</li>
               </ul>
             </div>
 
-            <div className="text-center pt-4">
-              <a href="/" className="text-gray-400 hover:text-light text-sm">
+            <div className="text-center pt-2">
+              <a href="/" className="btn-ghost inline-block">
                 ← Volver a PrivyCredit
               </a>
             </div>

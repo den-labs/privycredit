@@ -14,7 +14,7 @@ const bandOptions: BandLevel[] = ['A', 'B', 'C'];
 const getBandColor = (band: BandLevel) => {
   switch (band) {
     case 'A':
-      return 'bg-accent';
+      return 'bg-green-500';
     case 'B':
       return 'bg-yellow-500';
     case 'C':
@@ -51,153 +51,101 @@ export default function Simulator() {
     }
   };
 
+  const handleSelect = (key: keyof SimulatedFactors, band: BandLevel) => {
+    setFactors((prev) => ({
+      ...prev,
+      [key]: band,
+    }));
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark via-dark-card to-dark py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex bg-accent/20 rounded-full p-6 mb-4">
+    <div className="page-section">
+      <div className="section-shell max-w-3xl mx-auto space-y-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex rounded-full border border-white/15 bg-white/5 p-6">
             <TrendingUp className="w-16 h-16 text-accent" />
           </div>
-          <h1 className="text-3xl font-bold text-light mb-3">Simulador de bandas</h1>
-          <p className="text-light">
-            Explora cómo las mejoras afectan tu evaluación
-          </p>
+          <h1 className="text-3xl font-semibold text-white">Simulador de bandas</h1>
+          <p className="text-dark-muted">Explora cómo las mejoras afectan tu evaluación.</p>
         </div>
 
-        <div className="bg-dark-card/50 backdrop-blur-sm rounded-3xl border border-dark-border p-8 mb-6">
-          <div className="flex items-center justify-between mb-8">
+        <div className="glass-panel p-8 space-y-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-semibold text-light mb-2">Resultado simulado</h2>
-              <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-white">Resultado simulado</h2>
+              <div className="flex items-center gap-2 text-sm font-semibold">
                 {status === 'apto' ? (
                   <>
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <span className="text-green-400 font-semibold">Apto</span>
+                    <CheckCircle className="w-5 h-5 text-green-300" />
+                    <span className="text-green-200">Apto</span>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="w-5 h-5 text-yellow-400" />
-                    <span className="text-yellow-400 font-semibold">Casi</span>
+                    <AlertCircle className="w-5 h-5 text-amber-300" />
+                    <span className="text-amber-200">Casi</span>
                   </>
                 )}
               </div>
             </div>
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-2 text-gray-400 hover:text-light transition-colors"
-            >
+            <button onClick={handleReset} className="btn-ghost">
               <RotateCcw className="w-4 h-4" />
-              <span className="text-sm">Resetear</span>
+              Resetear
             </button>
           </div>
 
           <div className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-medium text-light mb-1">Estabilidad</h3>
-                  <p className="text-xs text-gray-400">Consistencia de saldos</p>
+            {([
+              { key: 'estabilidad', label: 'Estabilidad', description: 'Consistencia de saldos' },
+              { key: 'inflows', label: 'Inflows', description: 'Ingresos recurrentes' },
+              { key: 'riesgo', label: 'Riesgo', description: 'Gestión de volatilidad' },
+            ] as const).map((factor) => (
+              <div key={factor.key}>
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="text-white font-medium">{factor.label}</h3>
+                    <p className="text-xs text-dark-muted">{factor.description}</p>
+                  </div>
+                  <span className="band-pill" data-tone={factors[factor.key]}>
+                    Banda {factors[factor.key]}
+                  </span>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-bold text-light ${getBandColor(factors.estabilidad)}`}>
-                  Banda {factors.estabilidad}
-                </span>
-              </div>
-              <div className="flex gap-2">
-                {bandOptions.map((band) => (
-                  <button
-                    key={band}
-                    onClick={() => setFactors({ ...factors, estabilidad: band })}
-                    className={`flex-1 py-2 rounded-lg font-semibold transition-all ${
-                      factors.estabilidad === band
-                        ? `${getBandColor(band)} text-light`
-                        : 'bg-dark-card text-gray-400 hover:bg-gray-600'
-                    }`}
-                  >
-                    {band}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-medium text-light mb-1">Inflows</h3>
-                  <p className="text-xs text-gray-400">Ingresos recurrentes</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {bandOptions.map((band) => (
+                    <button
+                      key={band}
+                      onClick={() => handleSelect(factor.key, band)}
+                      className={`rounded-2xl border px-4 py-2 font-semibold transition ${
+                        factors[factor.key] === band
+                          ? 'border-white/40 bg-white/10 text-white'
+                          : 'border-white/10 bg-white/5 text-dark-muted hover:border-white/30'
+                      }`}
+                    >
+                      {band}
+                    </button>
+                  ))}
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-bold text-light ${getBandColor(factors.inflows)}`}>
-                  Banda {factors.inflows}
-                </span>
               </div>
-              <div className="flex gap-2">
-                {bandOptions.map((band) => (
-                  <button
-                    key={band}
-                    onClick={() => setFactors({ ...factors, inflows: band })}
-                    className={`flex-1 py-2 rounded-lg font-semibold transition-all ${
-                      factors.inflows === band
-                        ? `${getBandColor(band)} text-light`
-                        : 'bg-dark-card text-gray-400 hover:bg-gray-600'
-                    }`}
-                  >
-                    {band}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="font-medium text-light mb-1">Riesgo</h3>
-                  <p className="text-xs text-gray-400">Gestión de volatilidad</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-bold text-light ${getBandColor(factors.riesgo)}`}>
-                  Banda {factors.riesgo}
-                </span>
-              </div>
-              <div className="flex gap-2">
-                {bandOptions.map((band) => (
-                  <button
-                    key={band}
-                    onClick={() => setFactors({ ...factors, riesgo: band })}
-                    className={`flex-1 py-2 rounded-lg font-semibold transition-all ${
-                      factors.riesgo === band
-                        ? `${getBandColor(band)} text-light`
-                        : 'bg-dark-card text-gray-400 hover:bg-gray-600'
-                    }`}
-                  >
-                    {band}
-                  </button>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
 
-          <div className={`mt-8 rounded-xl p-4 border ${
-            status === 'apto'
-              ? 'bg-green-900/30 border-green-500/50'
-              : 'bg-yellow-900/30 border-yellow-500/50'
-          }`}>
-            <p className={`text-sm ${status === 'apto' ? 'text-green-200' : 'text-yellow-200'}`}>
-              {status === 'apto'
-                ? 'Con estas bandas alcanzarías el estado "Apto". Trabaja en mejorar tus factores para lograrlo.'
-                : 'Con estas bandas aún estarías en "Casi". Intenta mejorar más factores a banda A.'}
-            </p>
+          <div
+            className={`rounded-3xl border p-4 text-sm ${
+              status === 'apto'
+                ? 'border-green-400/40 bg-green-500/10 text-green-100'
+                : 'border-amber-400/40 bg-amber-500/10 text-amber-100'
+            }`}
+          >
+            {status === 'apto'
+              ? 'Con estas bandas alcanzarías el estado “Apto”. Trabaja en mantenerlas para consolidarlo.'
+              : 'Con estas bandas aún estarías en “Casi”. Lleva más factores a banda A para avanzar.'}
           </div>
         </div>
 
-        <div className="bg-dark-card/30 border border-accent/50 rounded-2xl p-4 mb-6 text-center">
-          <p className="text-light text-sm">
-            <strong>Nota educativa:</strong> Esta simulación no usa tus datos reales,
-            solo muestra cómo el modelo evalúa diferentes combinaciones de bandas.
-          </p>
+        <div className="glass-panel p-4 text-center text-sm text-dark-muted">
+          <strong className="text-white">Nota educativa:</strong> Esta simulación es ilustrativa; no usa tus datos en claro.
         </div>
 
-        <button
-          onClick={() => setCurrentScreen('result-casi')}
-          className="text-gray-400 hover:text-light text-sm transition-colors mx-auto block"
-        >
+        <button onClick={() => setCurrentScreen('result-casi')} className="btn-ghost mx-auto">
           ← Volver a resultados
         </button>
       </div>
