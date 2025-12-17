@@ -3,7 +3,6 @@ import { useAppKit } from '@reown/appkit/react';
 import { useAccount } from 'wagmi';
 import { Shield, CheckCircle, ExternalLink, AlertCircle, Lock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { SCROLL_SEPOLIA_NAME } from '../lib/contract';
 import { Badge, Button, Card } from './ui';
 
 export default function ConnectWallet() {
