@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "check:epoch": "node scripts/check-epoch.mjs",
+    "anchor:root": "node scripts/anchor-root.mjs"
   },
   "dependencies": {
     "@reown/appkit": "1.8.14",

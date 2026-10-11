@@ -3,11 +3,12 @@ import { useAccount, useChainId, useWalletClient } from 'wagmi';
 import { Shield, Loader } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import {
-  CONTRACT_ADDRESS,
   CONTRACT_ABI,
   bandLevelToBand,
-  SCROLL_SEPOLIA_CHAIN_ID,
-  SCROLL_SEPOLIA_NAME,
+  getContractAddress,
+  getNetworkConfig,
+  isSupportedChain,
+  SUPPORTED_NETWORK_NAMES,
 } from '../lib/contract';
 import { Proof, BandLevel } from '../types';
 import { keccak256, stringToHex } from 'viem';
@@ -15,7 +16,7 @@ import { keccak256, stringToHex } from 'viem';
 const steps = [
   { id: 1, label: 'Recopilando señales', description: 'Analizando tu historial on-chain' },
   { id: 2, label: 'Sellando la prueba ZK', description: 'Generando verificación criptográfica' },
-  { id: 3, label: 'Anclando en blockchain', description: 'Registrando en Scroll Sepolia' },
+  { id: 3, label: 'Anclando en blockchain', description: 'Registrando en Scroll' },
   { id: 4, label: 'Listo', description: 'Tu prueba está lista' },
 ];
 
@@ -93,9 +94,12 @@ export default function GenerateProof() {
     try {
       if (!address) throw new Error('Wallet no autenticada');
 
-      if (chainId !== SCROLL_SEPOLIA_CHAIN_ID) {
-        throw new Error(`Red incorrecta. Esta aplicación solo funciona en ${SCROLL_SEPOLIA_NAME} (Chain ID: ${SCROLL_SEPOLIA_CHAIN_ID})`);
+      if (!isSupportedChain(chainId)) {
+        throw new Error(
+          `Red incorrecta. Esta aplicación solo funciona en Scroll (${SUPPORTED_NETWORK_NAMES.join(' / ')})`,
+        );
       }
+      const targetNetwork = getNetworkConfig(chainId);
       if (!walletClient) {
         throw new Error('No se detectó ninguna wallet conectada. Reintenta la conexión.');
       }
@@ -115,7 +119,7 @@ export default function GenerateProof() {
       );
 
       const hash = await walletClient.writeContract({
-        address: CONTRACT_ADDRESS,
+        address: getContractAddress(chainId),
         abi: CONTRACT_ABI,
         functionName: 'submitProof',
         args: [
@@ -140,6 +144,7 @@ export default function GenerateProof() {
         epoch: currentEpoch,
         created_at: new Date().toISOString(),
         expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        chainId: targetNetwork.chainId,
       };
 
       setCurrentProof(proof);

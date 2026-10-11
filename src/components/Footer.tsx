@@ -1,17 +1,20 @@
 import { Shield, ExternalLink } from 'lucide-react';
 import { useAccount, useChainId } from 'wagmi';
 import {
-  SCROLL_SEPOLIA_NAME,
-  SCROLL_SEPOLIA_EXPLORER,
   CONTRACT_ADDRESS,
-  SCROLL_SEPOLIA_CHAIN_ID,
+  getExplorerUrl,
+  getNetworkConfig,
+  isSupportedChain,
 } from '../lib/contract';
 
 export default function Footer() {
   const { isConnected } = useAccount();
   const chainId = useChainId();
 
-  const isCorrectNetwork = chainId === SCROLL_SEPOLIA_CHAIN_ID;
+  const contractNetwork = getNetworkConfig();
+  const isCorrectNetwork = isSupportedChain(chainId);
+  const activeNetworkName = isCorrectNetwork ? getNetworkConfig(chainId).name : contractNetwork.name;
+  const contractExplorer = getExplorerUrl();
 
   return (
     <footer className="border-t border-white/5 bg-[#020617]/40 backdrop-blur-lg mt-auto relative z-10">
@@ -56,9 +59,9 @@ export default function Footer() {
 
           <div>
             <h4 className="text-white font-semibold mb-6 text-sm uppercase tracking-wider">Contrato</h4>
-            <p className="text-xs text-blue-100/60 mb-2 uppercase tracking-[0.3em]">Scroll Sepolia</p>
+            <p className="text-xs text-blue-100/60 mb-2 uppercase tracking-[0.3em]">{contractNetwork.name}</p>
             <a
-              href={`${SCROLL_SEPOLIA_EXPLORER}/address/${CONTRACT_ADDRESS}`}
+              href={`${contractExplorer}/address/${CONTRACT_ADDRESS}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-blue-300 hover:text-white transition-colors"
@@ -80,7 +83,7 @@ export default function Footer() {
             <span className="font-mono text-[11px] text-blue-100/70">
               {isConnected
                 ? isCorrectNetwork
-                  ? `System Status: Scroll (${SCROLL_SEPOLIA_NAME})`
+                  ? `System Status: Scroll (${activeNetworkName})`
                   : 'System Status: Cambia de red'
                 : 'System Status: Desconectado'}
             </span>

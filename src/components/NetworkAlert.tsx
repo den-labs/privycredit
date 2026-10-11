@@ -1,7 +1,12 @@
 import { AlertCircle, Zap, X } from 'lucide-react';
 import { useState } from 'react';
 import { useAccount, useChainId, useSwitchChain } from 'wagmi';
-import { SCROLL_SEPOLIA_CHAIN_ID, SCROLL_SEPOLIA_NAME } from '../lib/contract';
+import {
+  DEFAULT_CHAIN_ID,
+  getNetworkConfig,
+  isSupportedChain,
+  SUPPORTED_NETWORK_NAMES,
+} from '../lib/contract';
 import { Button } from './ui';
 
 export default function NetworkAlert() {
@@ -9,14 +14,15 @@ export default function NetworkAlert() {
   const chainId = useChainId();
   const { switchChainAsync, isPending } = useSwitchChain();
   const [dismissed, setDismissed] = useState(false);
+  const preferredNetwork = getNetworkConfig(DEFAULT_CHAIN_ID);
 
-  const isWrongNetwork = isConnected && chainId !== SCROLL_SEPOLIA_CHAIN_ID;
+  const isWrongNetwork = isConnected && !isSupportedChain(chainId);
 
   if (!isWrongNetwork || dismissed) return null;
 
   const handleSwitchNetwork = async () => {
     try {
-      await switchChainAsync?.({ chainId: SCROLL_SEPOLIA_CHAIN_ID });
+      await switchChainAsync?.({ chainId: preferredNetwork.chainId });
     } catch (switchError) {
       console.error('Failed to switch Scroll network:', switchError);
     }
@@ -32,11 +38,12 @@ export default function NetworkAlert() {
           <div className="flex-1 text-sm text-amber-50">
             <p className="uppercase text-[11px] tracking-[0.3em] text-amber-200/70 mb-1 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              Scroll Testnet
+              Scroll Networks
             </p>
             <h3 className="text-white font-semibold text-base mb-1">Necesitas cambiar de red</h3>
             <p className="text-amber-100/80 mb-3">
-              Esta dApp opera únicamente en {SCROLL_SEPOLIA_NAME}. Cambia tu wallet para continuar con el flujo.
+              Esta dApp opera en Scroll ({SUPPORTED_NETWORK_NAMES.join(' / ')}). Cambia tu wallet para continuar con el
+              flujo.
             </p>
             <div className="flex flex-col gap-3">
               <Button
@@ -47,7 +54,7 @@ export default function NetworkAlert() {
                 }`}
               >
                 <Zap className="w-4 h-4" />
-                {isPending ? 'Cambiando…' : `Cambiar a ${SCROLL_SEPOLIA_NAME}`}
+                {isPending ? 'Cambiando…' : `Cambiar a ${preferredNetwork.name}`}
               </Button>
               <button
                 onClick={() => setDismissed(true)}

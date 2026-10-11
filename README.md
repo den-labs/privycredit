@@ -41,10 +41,15 @@ flowchart LR
 | **Experiencia (React + Tailwind)** | UI responsiva lista para campañas, soporta múltiples pantallas y mensajes marketing-ready. |
 | **Orquestación Web3 (AppKit + wagmi + viem)** | Conexión segura a wallets Scroll y ejecución de `submitProof` sin exponer lógica sensible. |
 | **Datos (Supabase)** | Persistencia de pruebas, mejoras y recordatorios para nutrir CRM y seguimiento. |
-| **Blockchain (Scroll Sepolia)** | Registro inmutable que respalda cada prueba con un hash verificable por socios. |
+| **Blockchain (Scroll Mainnet + Sepolia)** | Registro inmutable que respalda cada prueba con un hash verificable por socios. |
 
 ## Lanzamiento Rápido
 1. **Requisitos:** Node 20+, npm 10+, wallet compatible con Scroll.
 2. **Instalación:** `npm install` y copia `.env.example` a `.env.local` (todas las claves deben iniciar con `VITE_`).
-3. **Configura** RPC de Scroll, dirección del contrato y credenciales de Supabase.
+3. **Configura** RPC de Scroll, dirección del contrato y credenciales de Supabase. Define `ANCHOR_PRIVATE_KEY` (la llave del owner del contrato) para poder anclar epochs desde scripts locales.
 4. **Ejecución:** `npm run dev` para la demo interna; `npm run build` + `npm run preview` para QA previo a campañas.
+
+## Operación on-chain
+- Antes de generar pruebas en una red, ancla el root del epoch activo con `pnpm run anchor:root -- --chain=mainnet --root=0x…`. El epoch por defecto es el día actual (`Math.floor(Date.now() / día)`), pero puedes especificar otro usando `--epoch=20439`.
+- Verifica qué redes tienen root anclado ejecutando `pnpm run check:epoch`. El script consulta los contratos de Scroll Mainnet y Sepolia utilizando los RPC por defecto y avisa si falta registrar el root.
+- Si el root no existe para un epoch, las llamadas a `submitProof` revertirán con `epoch not anchored`. Mantén un job (cron/servicio) que ejecute el script de anclaje antes de abrir el flujo a usuarios en producción.

@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
   Wallet,
-  ChevronRight,
-  ChevronLeft,
   CheckCircle,
   Zap,
   Lock,
@@ -11,9 +9,9 @@ import {
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import {
-  SCROLL_SEPOLIA_NAME,
-  SCROLL_SEPOLIA_EXPLORER,
   CONTRACT_ADDRESS,
+  getNetworkConfig,
+  getExplorerUrl,
 } from '../lib/contract'
 import heroMock from '../../assets/privycredit-hero.png'
 import dashboardMock from '../../assets/privycredit-home.png'
@@ -84,6 +82,8 @@ const testimonials = [
 export default function Landing() {
   const { setCurrentScreen } = useApp()
   const [activeCard, setActiveCard] = useState(0)
+  const featuredNetwork = getNetworkConfig()
+  const explorerUrl = getExplorerUrl()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -355,7 +355,7 @@ export default function Landing() {
               Contrato verificado
             </p>
             <h3 className="text-2xl font-semibold text-white">
-              Scroll · {SCROLL_SEPOLIA_NAME}
+              Scroll · {featuredNetwork.name}
             </h3>
             <p className="text-sm text-blue-100/70">
               Todas las pruebas se anclan en nuestro smart contract. Puedes
@@ -368,7 +368,7 @@ export default function Landing() {
               {CONTRACT_ADDRESS.substring(CONTRACT_ADDRESS.length - 8)}
             </code>
             <a
-              href={`${SCROLL_SEPOLIA_EXPLORER}/address/${CONTRACT_ADDRESS}`}
+              href={`${explorerUrl}/address/${CONTRACT_ADDRESS}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 text-blue-300 hover:text-white transition-colors text-sm"

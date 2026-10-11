@@ -1,12 +1,81 @@
 import { createPublicClient, http, type Address } from 'viem';
-import { scrollSepolia } from 'viem/chains';
+import { scroll, scrollSepolia } from 'viem/chains';
 
-export const SCROLL_SEPOLIA_CHAIN_ID = 534351;
-export const SCROLL_SEPOLIA_NAME = 'Scroll Sepolia Testnet';
-export const SCROLL_SEPOLIA_RPC = 'https://sepolia-rpc.scroll.io';
-export const SCROLL_SEPOLIA_EXPLORER = 'https://sepolia.scrollscan.com';
+export type ScrollNetworkConfig = {
+  key: 'mainnet' | 'sepolia';
+  chainId: number;
+  name: string;
+  explorer: string;
+  rpcUrl: string;
+  contractAddress: Address;
+  isTestnet: boolean;
+};
 
-export const CONTRACT_ADDRESS = '0x99E36C7D9a01d10E9bb7A40870b7580a2A88E8A7' as Address;
+const SUPPORTED_NETWORKS = [
+  {
+    key: 'mainnet',
+    chainId: scroll.id,
+    name: 'Scroll Mainnet',
+    explorer: 'https://scrollscan.com',
+    rpcUrl: 'https://rpc.scroll.io',
+    contractAddress: '0x66322406Ada2d92B38E13803fA8eC3382c65f008' as Address,
+    isTestnet: false,
+  },
+  {
+    key: 'sepolia',
+    chainId: scrollSepolia.id,
+    name: 'Scroll Sepolia Testnet',
+    explorer: 'https://sepolia.scrollscan.com',
+    rpcUrl: 'https://sepolia-rpc.scroll.io',
+    contractAddress: '0x99E36C7D9a01d10E9bb7A40870b7580a2A88E8A7' as Address,
+    isTestnet: true,
+  },
+] as const satisfies readonly ScrollNetworkConfig[];
+
+export const [SCROLL_MAINNET_CONFIG, SCROLL_SEPOLIA_CONFIG] = SUPPORTED_NETWORKS;
+
+export const SCROLL_MAINNET_CHAIN_ID = SCROLL_MAINNET_CONFIG.chainId;
+export const SCROLL_SEPOLIA_CHAIN_ID = SCROLL_SEPOLIA_CONFIG.chainId;
+
+export type SupportedChainId = (typeof SUPPORTED_NETWORKS)[number]['chainId'];
+
+export const SUPPORTED_CHAIN_IDS = [SCROLL_MAINNET_CHAIN_ID, SCROLL_SEPOLIA_CHAIN_ID] as const;
+export const SUPPORTED_NETWORK_NAMES = SUPPORTED_NETWORKS.map((network) => network.name);
+
+const NETWORK_CONFIG_BY_CHAIN_ID: Record<SupportedChainId, ScrollNetworkConfig> = {
+  [SCROLL_MAINNET_CHAIN_ID]: SCROLL_MAINNET_CONFIG,
+  [SCROLL_SEPOLIA_CHAIN_ID]: SCROLL_SEPOLIA_CONFIG,
+};
+
+export const SCROLL_MAINNET_NAME = SCROLL_MAINNET_CONFIG.name;
+export const SCROLL_MAINNET_RPC = SCROLL_MAINNET_CONFIG.rpcUrl;
+export const SCROLL_MAINNET_EXPLORER = SCROLL_MAINNET_CONFIG.explorer;
+
+export const SCROLL_SEPOLIA_NAME = SCROLL_SEPOLIA_CONFIG.name;
+export const SCROLL_SEPOLIA_RPC = SCROLL_SEPOLIA_CONFIG.rpcUrl;
+export const SCROLL_SEPOLIA_EXPLORER = SCROLL_SEPOLIA_CONFIG.explorer;
+
+export const DEFAULT_CHAIN_ID = SCROLL_MAINNET_CHAIN_ID;
+export const CONTRACT_ADDRESS = SCROLL_MAINNET_CONFIG.contractAddress;
+
+export const CONTRACT_ADDRESSES: Record<SupportedChainId, Address> = {
+  [SCROLL_MAINNET_CHAIN_ID]: SCROLL_MAINNET_CONFIG.contractAddress,
+  [SCROLL_SEPOLIA_CHAIN_ID]: SCROLL_SEPOLIA_CONFIG.contractAddress,
+};
+
+export const getNetworkConfig = (chainId?: number): ScrollNetworkConfig => {
+  if (isSupportedChain(chainId)) {
+    return NETWORK_CONFIG_BY_CHAIN_ID[chainId];
+  }
+  return NETWORK_CONFIG_BY_CHAIN_ID[DEFAULT_CHAIN_ID];
+};
+
+export const getContractAddress = (chainId?: number): Address => getNetworkConfig(chainId).contractAddress;
+export const getExplorerUrl = (chainId?: number): string => getNetworkConfig(chainId).explorer;
+export const getNetworkName = (chainId?: number): string => getNetworkConfig(chainId).name;
+
+export const isSupportedChain = (chainId?: number): chainId is SupportedChainId =>
+  typeof chainId === 'number' && SUPPORTED_CHAIN_IDS.includes(chainId as SupportedChainId);
 
 export const CONTRACT_ABI = [
   {
@@ -167,10 +236,67 @@ export const CONTRACT_ABI = [
   },
 ] as const;
 
-export const publicClient = createPublicClient({
-  chain: scrollSepolia,
-  transport: http(),
-});
+const publicClients: Record<SupportedChainId, ReturnType<typeof createPublicClient>> = {
+  [SCROLL_MAINNET_CHAIN_ID]: createPublicClient({
+    chain: scroll,
+    transport: http(SCROLL_MAINNET_RPC),
+  }),
+  [SCROLL_SEPOLIA_CHAIN_ID]: createPublicClient({
+    chain: scrollSepolia,
+    transport: http(SCROLL_SEPOLIA_RPC),
+  }),
+};
+
+export const getPublicClient = (chainId?: number) => {
+  const targetChainId: SupportedChainId = isSupportedChain(chainId) ? chainId : DEFAULT_CHAIN_ID;
+  return publicClients[targetChainId];
+};
+
+export const publicClient = getPublicClient();
+
+export type ProofSummaryTuple = readonly [
+  Address,
+  bigint,
+  `0x${string}`,
+  number,
+  number,
+  number,
+  boolean,
+  bigint,
+];
+
+export type ProofSummaryResult = {
+  data: ProofSummaryTuple;
+  network: ScrollNetworkConfig;
+  chainId: SupportedChainId;
+  client: ReturnType<typeof createPublicClient>;
+};
+
+export const findValidProofSummary = async (
+  proofId: `0x${string}`,
+): Promise<ProofSummaryResult | null> => {
+  for (const chainId of SUPPORTED_CHAIN_IDS) {
+    const network = NETWORK_CONFIG_BY_CHAIN_ID[chainId];
+    const client = publicClients[chainId];
+    const data = (await client.readContract({
+      address: network.contractAddress,
+      abi: CONTRACT_ABI,
+      functionName: 'getProofSummary',
+      args: [proofId],
+    })) as ProofSummaryTuple;
+
+    if (data[6]) {
+      return {
+        data,
+        network,
+        chainId,
+        client,
+      };
+    }
+  }
+
+  return null;
+};
 
 export enum Band {
   A = 0,

@@ -9,13 +9,7 @@ import {
   CalendarDays,
   Wallet,
 } from 'lucide-react';
-import {
-  publicClient,
-  CONTRACT_ADDRESS,
-  CONTRACT_ABI,
-  SCROLL_SEPOLIA_EXPLORER,
-  bandToBandLevel,
-} from '../lib/contract';
+import { CONTRACT_ABI, bandToBandLevel, findValidProofSummary } from '../lib/contract';
 import { BandLevel } from '../types';
 
 type VerifyPublicProps = {
@@ -26,6 +20,9 @@ type ProofView = {
   wallet: string;
   createdAt: Date;
   expiresAt: Date;
+  chainId: number;
+  networkName: string;
+  explorerUrl: string;
   factors: {
     estabilidad: BandLevel;
     inflows: BandLevel;
@@ -86,12 +83,13 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
       setProof(null);
 
       try {
-        const data = await publicClient.readContract({
-          address: CONTRACT_ADDRESS,
-          abi: CONTRACT_ABI,
-          functionName: 'getProofSummary',
-          args: [normalizedProofId],
-        });
+        const result = await findValidProofSummary(normalizedProofId);
+
+        if (!result) {
+          throw new Error('Esta prueba fue revocada, vencida o nunca existió.');
+        }
+
+        const { data, network, client } = result;
 
         const [user, , , stability, inflows, risk, valid, createdAt] = data;
 
@@ -106,6 +104,9 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
           wallet: user as string,
           createdAt: new Date(createdAtMs),
           expiresAt,
+          chainId: network.chainId,
+          networkName: network.name,
+          explorerUrl: network.explorer,
           factors: {
             estabilidad: bandToBandLevel(Number(stability)),
             inflows: bandToBandLevel(Number(inflows)),
@@ -114,11 +115,11 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
         };
 
         try {
-          const latestBlock = await publicClient.getBlockNumber();
+          const latestBlock = await client.getBlockNumber();
           const lookbackWindow = 2_000_000n;
           const fromBlock = latestBlock > lookbackWindow ? latestBlock - lookbackWindow : 0n;
-          const logs = await publicClient.getContractEvents({
-            address: CONTRACT_ADDRESS,
+          const logs = await client.getContractEvents({
+            address: network.contractAddress,
             abi: CONTRACT_ABI,
             eventName: 'ProofSubmitted',
             args: {
@@ -225,7 +226,7 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
                   <p className="font-mono text-white">
                     {proof.wallet.substring(0, 6)}...{proof.wallet.substring(proof.wallet.length - 4)}
                   </p>
-                  <p className="text-xs text-dark-subtle mt-1">Anclada con hash único.</p>
+                  <p className="text-xs text-dark-subtle mt-1">Anclada en {proof.networkName}.</p>
                 </div>
               </div>
 
@@ -277,7 +278,7 @@ export default function VerifyPublic({ proofId }: VerifyPublicProps) {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 {proof.txHash ? (
                   <a
-                    href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${proof.txHash}`}
+                    href={`${proof.explorerUrl}/tx/${proof.txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-secondary inline-flex items-center gap-2"

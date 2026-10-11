@@ -15,4 +15,5 @@ export interface Proof {
   epoch: number;
   created_at: string;
   expires_at: string;
+  chainId: number;
 }

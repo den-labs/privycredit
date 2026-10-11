@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Share2, Copy, CheckCircle, Clock, ExternalLink } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { SCROLL_SEPOLIA_EXPLORER } from '../lib/contract';
+import { getExplorerUrl, getNetworkConfig } from '../lib/contract';
 
 export default function ShareProof() {
   const { currentProof, setCurrentScreen } = useApp();
@@ -11,6 +11,8 @@ export default function ShareProof() {
     setCurrentScreen('landing');
     return null;
   }
+  const proofNetwork = getNetworkConfig(currentProof.chainId);
+  const explorerUrl = getExplorerUrl(currentProof.chainId);
 
   const shareBase =
     typeof window !== 'undefined' && import.meta.env.DEV
@@ -108,17 +110,20 @@ export default function ShareProof() {
             <span className="text-white">{new Date(currentProof.created_at).toLocaleDateString()}</span>
           </div>
           {currentProof.tx_hash && (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-2">
               <span>Blockchain:</span>
-              <a
-                href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${currentProof.tx_hash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-accent hover:text-white text-xs"
-              >
-                Ver transacción
-                <ExternalLink className="w-3 h-3" />
-              </a>
+              <div className="flex items-center gap-2">
+                <span className="text-white text-xs">{proofNetwork.name}</span>
+                <a
+                  href={`${explorerUrl}/tx/${currentProof.tx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-accent hover:text-white text-xs"
+                >
+                  Ver transacción
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
           )}
         </div>

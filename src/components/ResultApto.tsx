@@ -1,6 +1,6 @@
 import { CheckCircle, Share2, Eye, ExternalLink } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { SCROLL_SEPOLIA_EXPLORER } from '../lib/contract';
+import { getExplorerUrl, getNetworkConfig } from '../lib/contract';
 import { Badge, Button, Card } from './ui';
 
 export default function ResultApto() {
@@ -10,6 +10,8 @@ export default function ResultApto() {
     setCurrentScreen('landing');
     return null;
   }
+  const proofNetwork = getNetworkConfig(currentProof.chainId);
+  const explorerUrl = getExplorerUrl(currentProof.chainId);
 
   const factors = [
     { label: 'Estabilidad', description: 'Consistencia de saldos', value: currentProof.factors.estabilidad },
@@ -112,15 +114,18 @@ export default function ResultApto() {
             {currentProof.tx_hash && (
               <div className="flex justify-between gap-4">
                 <span>Transacción:</span>
-                <a
-                  href={`${SCROLL_SEPOLIA_EXPLORER}/tx/${currentProof.tx_hash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-emerald-200 hover:text-white text-xs"
-                >
-                  Ver en blockchain
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+                <div className="flex items-center gap-2">
+                  <span className="text-white text-xs">{proofNetwork.name}</span>
+                  <a
+                    href={`${explorerUrl}/tx/${currentProof.tx_hash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-emerald-200 hover:text-white text-xs"
+                  >
+                    Ver en blockchain
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
             )}
           </div>

@@ -11,17 +11,6 @@ type SimulatedFactors = {
 
 const bandOptions: BandLevel[] = ['A', 'B', 'C'];
 
-const getBandColor = (band: BandLevel) => {
-  switch (band) {
-    case 'A':
-      return 'bg-green-500';
-    case 'B':
-      return 'bg-yellow-500';
-    case 'C':
-      return 'bg-red-500';
-  }
-};
-
 const calculateStatus = (factors: SimulatedFactors): 'apto' | 'casi' => {
   const scores = {
     A: 3,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Shield, Search, AlertCircle } from 'lucide-react';
-import { publicClient, CONTRACT_ADDRESS, CONTRACT_ABI, bandToBandLevel } from '../lib/contract';
+import { bandToBandLevel, findValidProofSummary } from '../lib/contract';
 import { BandLevel } from '../types';
 
 type VerificationResult = {
@@ -12,6 +12,9 @@ type VerificationResult = {
   risk: BandLevel;
   valid: boolean;
   createdAt: bigint;
+  chainId: number;
+  networkName: string;
+  explorerUrl: string;
 } | null;
 
 export default function VerifierGate() {
@@ -33,12 +36,14 @@ export default function VerifierGate() {
     try {
       const proofIdHex = proofId.startsWith('0x') ? (proofId as `0x${string}`) : (`0x${proofId}` as `0x${string}`);
 
-      const data = await publicClient.readContract({
-        address: CONTRACT_ADDRESS,
-        abi: CONTRACT_ABI,
-        functionName: 'getProofSummary',
-        args: [proofIdHex],
-      });
+      const result = await findValidProofSummary(proofIdHex);
+
+      if (!result) {
+        setError('Esta prueba ha sido revocada o no existe');
+        return;
+      }
+
+      const { data, network } = result;
 
       const [user, epoch, commitment, stability, inflows, risk, valid, createdAt] = data;
 
@@ -56,6 +61,9 @@ export default function VerifierGate() {
         risk: bandToBandLevel(Number(risk)),
         valid,
         createdAt,
+        chainId: network.chainId,
+        networkName: network.name,
+        explorerUrl: network.explorer,
       });
     } catch (err: any) {
       console.error('Verification error:', err);
@@ -136,6 +144,10 @@ export default function VerifierGate() {
             <div className="flex justify-between">
               <span>Estado:</span>
               <span className="text-green-200 font-semibold">Válida</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Blockchain:</span>
+              <span className="text-white">{result.networkName}</span>
             </div>
           </div>
 
